@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 AgroForest - Historial</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .historial-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .lista-analisis {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .graficas-container {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .grafica {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .analisis-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .analisis-item:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🌱 AgroForest🌿</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="mapa.html">Mapa</a>
+        <a href="historial.html">Historial</a>
+        <a href="configuracion.html">Configuración</a>
+        <div id="adminLinks" style="display: none;">
+            <a href="#" onclick="openUserModal()">Crear Usuario</a>
+        </div>
+        <a href="login.html">Cerrar sesión</a>
+    </div>
+    <div class="main">
+        <h1>Historial de Análisis</h1>
+        <div class="historial-container">
+            <div class="lista-analisis">
+                <h2>Análisis Realizados</h2>
+                <div id="listaAnalisis"></div>
+            </div>
+            <div class="graficas-container">
+                <div class="grafica">
+                    <h2>Rendimiento por Cultivo</h2>
+                    <canvas id="chartRendimiento"></canvas>
+                </div>
+                <div class="grafica">
+                    <h2>ROI por Análisis</h2>
+                    <canvas id="chartROI"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chartRendimiento, chartROI;
+        let analisisData = [];
+        
+        window.onload = () => {
+            // Verificar rol para mostrar links de admin
+            const rol = localStorage.getItem('rol');
+            if (rol === 'AD') {
+                document.getElementById('adminLinks').style.display = 'block';
+            }
+            
+            // Cargar historial
+            cargarHistorial();
+        };
+        
+        function cargarHistorial() {
+            fetch('/historial', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                analisisData = data;
+                mostrarListaAnalisis();
+                actualizarGraficas();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar el historial');
+            });
+        }
+        
+        function mostrarListaAnalisis() {
+            const lista = document.getElementById('listaAnalisis');
+            lista.innerHTML = '';
+            
+            analisisData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'analisis-item';
+                
+				div.innerHTML = `
+                    <p><strong>${item.cultivo || 'Sin cultivo'}</strong></p>
+                    <small>${new Date(item.fecha).toLocaleDateString()}</small>
+                    <p>ROI: ${item.roi || 'N/A'}%</p>
+                `;
+                div.addEventListener('click', () => mostrarDetalleAnalisis(index));
+                lista.appendChild(div);
+				function verInforme(index) {
+					const item = analisisData[index];
+					alert(`Informe completo:\nCultivo: ${item.cultivo}\nROI: ${item.roi}%\nDetalles: ${JSON.stringify(item.resultado, null, 2)}`);
+				}
+            });
+        }
+        
+        function actualizarGraficas() {
+            // Destruir gráficas anteriores si existen
+            if (chartRendimiento) chartRendimiento.destroy();
+            if (chartROI) chartROI.destroy();
+            
+            // Agrupar datos por cultivo
+            const cultivos = {};
+            analisisData.forEach(item => {
+                const cultivo = item.cultivo || 'Desconocido';
+                if (!cultivos[cultivo]) {
+                    cultivos[cultivo] = {
+                        count: 0,
+                        rendimiento: 0,
+                        roi: 0
+                    };
+                }
+                cultivos[cultivo].count++;
+                cultivos[cultivo].rendimiento += item.rendimiento_estimado || 0;
+                cultivos[cultivo].roi += item.roi || 0;
+            });
+            
+            // Preparar datos para gráficas
+            const labels = Object.keys(cultivos);
+            const rendimientoData = labels.map(c => cultivos[c].rendimiento / cultivos[c].count);
+            const roiData = labels.map(c => cultivos[c].roi / cultivos[c].count);
+            
+            // Gráfica de rendimiento
+            const ctxRendimiento = document.getElementById('chartRendimiento').getContext('2d');
+            chartRendimiento = new Chart(ctxRendimiento, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Rendimiento Promedio (kg/ha)',
+                        data: rendimientoData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Gráfica de ROI
+            const ctxROI = document.getElementById('chartROI').getContext('2d');
+            chartROI = new Chart(ctxROI, {
+                type: 'line',
+                data: {
+                    labels: analisisData.map((_, i) => Análisis ${i+1}),
+                    datasets: [{
+                        label: 'ROI (%)',
+                        data: analisisData.map(item => item.roi || 0),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function mostrarDetalleAnalisis(index) {
+            const item = analisisData[index];
+            alert(Detalles del análisis:\nCultivo: ${item.cultivo || 'N/A'}\nFecha: ${item.fecha}\nROI: ${item.roi || 'N/A'}%\nRMSE: ${item.rmse || 'N/A'});
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('rol');
+        }
+    </script>
+</body>
+</html>

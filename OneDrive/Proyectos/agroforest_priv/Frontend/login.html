@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>?? AgroForest - Iniciar Sesi車n</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-container">
+            <h2>?? AgroForest</h2>
+            <h4>Iniciar Sesi車n</h4>
+            <form id="loginForm">
+                <label for="usuario">Usuario</label>
+                <input type="text" id="usuario" name="usuario" placeholder="Nombre de usuario" required>
+                <label for="contrasena">Contrase?a</label>
+                <input type="password" id="contrasena" name="contrasena" placeholder="Contrase?a" required>
+                <button type="submit">Ingresar</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usuario = document.getElementById('usuario').value;
+            const contrasena = document.getElementById('contrasena').value;
+            
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ usuario: usuario, contrasena: contrasena })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('rol', data.rol);
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert(data.error || 'Error al iniciar sesi車n');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al intentar iniciar sesi車n');
+            });
+        });
+    </script>
+</body>
+</html>
+

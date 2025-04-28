@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 AgroForest - Mapa</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+    <style>
+        #map {
+            height: 70vh;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .map-controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🌱 AgroForest🌿</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="mapa.html">Mapa</a>
+        <a href="historial.html">Historial</a>
+        <a href="configuracion.html">Configuración</a>
+        <div id="adminLinks" style="display: none;">
+            <a href="#" onclick="openUserModal()">Crear Usuario</a>
+        </div>
+        <a href="login.html">Cerrar sesión</a>
+    </div>
+    <div class="main">
+        <h1>Mapa Interactivo</h1>
+        <div class="map-controls">
+            <p>Selecciona una zona en el mapa para realizar un análisis.</p>
+            <div id="sugerencias" style="margin-top: 10px;"></div>
+        </div>
+        <div id="map"></div>
+        <div id="resultados" style="margin-top: 20px;"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+    <script>
+        let map, areaSeleccionada = [];
+
+        window.onload = () => {
+            const rol = localStorage.getItem('rol');
+            if (rol === 'AD') {
+                document.getElementById('adminLinks').style.display = 'block';
+            }
+            initMap();
+        };
+
+        function initMap() {
+            map = L.map('map').setView([4.5709, -74.2973], 6);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            const drawnItems = new L.FeatureGroup();
+            map.addLayer(drawnItems);
+
+            const drawControl = new L.Control.Draw({
+                draw: {
+                    polygon: true,
+                    polyline: false,
+                    rectangle: false,
+                    circle: false,
+                    marker: false,
+                    circlemarker: false
+                },
+                edit: {
+                    featureGroup: drawnItems
+                }
+            });
+            map.addControl(drawControl);
+
+            map.on(L.Draw.Event.CREATED, function (e) {
+                drawnItems.clearLayers();
+                const layer = e.layer;
+                drawnItems.addLayer(layer);
+
+                const latlngs = layer.getLatLngs()[0];
+                areaSeleccionada = latlngs.map(p => [p.lat, p.lng]);
+
+                const cultivo = prompt("¿Qué deseas sembrar en esta zona? (Deja en blanco para sugerencias)");
+
+                if (!cultivo) {
+                    document.getElementById("sugerencias").innerHTML = `
+                        <p><strong>Sugerencias de siembra:</strong> Según el terreno, clima y análisis previos, se recomienda: café, cacao, plátano.</p>
+                    `;
+                }
+
+                analizarArea(cultivo);
+            });
+        }
+
+        function analizarArea(cultivo) {
+            if (areaSeleccionada.length < 3) {
+                alert("Selecciona al menos 3 puntos para formar un área.");
+                return;
+            }
+
+            fetch('/analizar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    cultivo: cultivo || '',
+                    coordenadas: areaSeleccionada
+                })
+            })
+            .then(res => res.json())
+            .then(data => mostrarResultados(data, cultivo))
+            .catch(err => {
+                console.error(err);
+                alert("Error al analizar el área.");
+            });
+        }
+
+        function mostrarResultados(data, cultivo) {
+            const div = document.getElementById('resultados');
+            let html = `
+                <h2>📊 Resultados del Análisis</h2>
+                ${!cultivo ? `<p><strong>Cultivo sugerido:</strong> ${data.cultivo_sugerido || 'Café / Cacao'}</p>` : ''}
+                <p><strong>Rendimiento estimado:</strong> ${data.rendimiento_estimado || 'N/A'} kg/ha</p>
+                <p><strong>Riesgo climático:</strong> ${data.riesgo_climatico || 'N/A'}%</p>
+                <p><strong>ROI estimado:</strong> ${data.roi || 'N/A'}%</p>
+                <h3>Recomendaciones:</h3>
+                <ul>${(data.recomendaciones || []).map(r => `<li>${r}</li>`).join('')}</ul>
+                <button onclick="guardarAnalisis(${JSON.stringify(data).replace(/"/g, '&quot;')})">Guardar Análisis</button>
+            `;
+            div.innerHTML = html;
+        }
+
+        function guardarAnalisis(dataRaw) {
+            const data = {
+                cultivo: dataRaw.cultivo || 'Sugerido',
+                latitud: areaSeleccionada[0][0],
+                longitud: areaSeleccionada[0][1],
+                resultado: dataRaw,
+                rmse: dataRaw.rmse || 0,
+                roi: dataRaw.roi || 0
+            };
+
+            fetch('/guardar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(response => {
+                alert(response.mensaje || 'Análisis guardado correctamente');
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error al guardar análisis.");
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('rol');
+        }
+    </script>
+</body>
+</html>
