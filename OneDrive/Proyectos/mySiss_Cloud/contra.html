@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contratos - mySiss</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --mysiss-purple: #800080;
+            --mysiss-light-purple: #EBE3F2;
+            --mysiss-hover-purple: #DFD1EE;
+        }
+        
+        /* Estilos para el modal de búsqueda */
+        .search-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 700px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        /* Estilos para el modal de ayuda */
+        .help-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            max-width: 90%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1001;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .help-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .help-item:hover {
+            background-color: var(--mysiss-light-purple);
+        }
+        
+        .help-item input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: var(--mysiss-purple);
+        }
+        
+        #specialty {
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Contenido principal -->
+    <div class="container mx-auto p-4">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h1 class="text-2xl font-bold text-[var(--mysiss-purple)] mb-4">Contratos</h1>
+            
+            <div class="flex space-x-4 mb-6">
+                <button id="search-btn" class="bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Buscar
+                </button>
+                
+                <button id="new-btn" class="bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Nuevo
+                </button>
+            </div>
+            
+            <!-- Resultados -->
+            <div id="results" class="hidden">
+                <table class="min-w-full bg-white">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border">✓</th>
+                            <th class="py-2 px-4 border">Código</th>
+                            <th class="py-2 px-4 border">Tipo</th>
+                            <th class="py-2 px-4 border">Profesional/Sociedad</th>
+                            <th class="py-2 px-4 border">Especialidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                        <!-- Resultados dinámicos -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de búsqueda -->
+    <div id="search-modal" class="search-modal hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-[var(--mysiss-purple)]">Búsqueda de contratos</h2>
+            <button id="close-search-modal" class="text-gray-500 hover:text-gray-700">
+                ✕
+            </button>
+        </div>
+        
+        <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Activo</label>
+                    <select id="active-filter" class="w-full border rounded px-3 py-2">
+                        <option value="all">Todos</option>
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Código contrato</label>
+                    <div class="flex">
+                        <input id="contract-code" type="text" class="flex-1 border rounded-l px-3 py-2">
+                        <button id="contract-code-help" class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-r">
+                            ?
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vigencia desde</label>
+                    <input id="validity-from" type="date" class="w-full border rounded px-3 py-2">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vigencia hasta</label>
+                    <input id="validity-to" type="date" class="w-full border rounded px-3 py-2">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Contrato</label>
+                    <select id="contract-type" class="w-full border rounded px-3 py-2">
+                        <option value="">Todos</option>
+                        <option value="propio">A nombre propio</option>
+                        <option value="sociedad">Sociedad</option>
+                    </select>
+                </div>
+                
+                <div id="professional-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Profesional</label>
+                    <div class="flex">
+                        <input id="professional" type="text" class="flex-1 border rounded-l px-3 py-2">
+                        <button id="professional-help" class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-r">
+                            ?
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="society-group" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sociedad Médica</label>
+                    <div class="flex">
+                        <input id="society" type="text" class="flex-1 border rounded-l px-3 py-2">
+                        <button id="society-help" class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-r">
+                            ?
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
+                <div class="flex">
+                    <input id="specialty" type="text" class="border rounded-l px-3 py-2" style="width: 200px;">
+                    <button id="specialty-help" class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-r">
+                        ?
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex justify-center pt-4">
+                <button id="execute-search" class="bg-[var(--mysiss-purple)] text-white px-6 py-2 rounded hover:bg-purple-700">
+                    Ejecutar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de ayuda -->
+    <div id="help-modal" class="help-modal hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="help-modal-title" class="text-lg font-semibold">Ayuda</h3>
+            <button id="close-help-modal" class="text-gray-500 hover:text-gray-700">
+                ✕
+            </button>
+        </div>
+        
+        <div id="help-modal-content">
+            <!-- Contenido dinámico -->
+        </div>
+        
+        <div class="flex justify-center mt-4">
+            <button id="apply-help" class="bg-[var(--mysiss-purple)] text-white px-6 py-2 rounded hover:bg-purple-700">
+                Aplicar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo
+        const contractsData = [
+            { id: 1, code: "CTR-001", type: "propio", professional: "Dr. Juan Pérez", society: "", specialty: "Cardiología", status: "Activo" },
+            { id: 2, code: "CTR-002", type: "sociedad", professional: "Dr. Carlos R.", society: "Clínica Norte", specialty: "Ortopedia", status: "Activo" },
+            { id: 3, code: "CTR-003", type: "propio", professional: "Dra. María G.", society: "", specialty: "Pediatría", status: "Inactivo" }
+        ];
+
+        // Datos de ayuda
+        const helpData = {
+            contractCodes: [
+                { code: "CTR-001", description: "Contrato Dr. Juan Pérez" },
+                { code: "CTR-002", description: "Contrato Clínica Norte" },
+                { code: "CTR-003", description: "Contrato Dra. María G." }
+            ],
+            professionals: [
+                { id: 1, name: "Dr. Juan Pérez", specialty: "Cardiología" },
+                { id: 2, name: "Dr. Carlos R.", specialty: "Ortopedia" },
+                { id: 3, name: "Dra. María G.", specialty: "Pediatría" }
+            ],
+            societies: [
+                { id: 1, name: "Clínica Norte", representative: "Dr. Carlos R." },
+                { id: 2, name: "Centro Médico", representative: "Dra. Laura M." }
+            ],
+            specialties: ["Cardiología", "Ortopedia", "Pediatría", "Neurología"]
+        };
+
+        // Mostrar/ocultar modales
+        document.getElementById('search-btn').addEventListener('click', () => {
+            document.getElementById('search-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('close-search-modal').addEventListener('click', () => {
+            document.getElementById('search-modal').classList.add('hidden');
+        });
+
+        document.getElementById('close-help-modal').addEventListener('click', () => {
+            document.getElementById('help-modal').classList.add('hidden');
+        });
+
+        // Cambiar entre Profesional/Sociedad
+        document.getElementById('contract-type').addEventListener('change', function() {
+            if (this.value === 'propio') {
+                document.getElementById('professional-group').classList.remove('hidden');
+                document.getElementById('society-group').classList.add('hidden');
+            } else if (this.value === 'sociedad') {
+                document.getElementById('professional-group').classList.add('hidden');
+                document.getElementById('society-group').classList.remove('hidden');
+            } else {
+                document.getElementById('professional-group').classList.remove('hidden');
+                document.getElementById('society-group').classList.add('hidden');
+            }
+        });
+
+        // Ayudas de búsqueda
+        document.getElementById('contract-code-help').addEventListener('click', () => {
+            showHelpModal('Códigos de contrato', helpData.contractCodes, 'code', 'description', 'contract-code');
+        });
+
+        document.getElementById('professional-help').addEventListener('click', () => {
+            showHelpModal('Profesionales', helpData.professionals, 'name', 'specialty', 'professional');
+        });
+
+        document.getElementById('society-help').addEventListener('click', () => {
+            showHelpModal('Sociedades', helpData.societies, 'name', 'representative', 'society');
+        });
+
+        document.getElementById('specialty-help').addEventListener('click', () => {
+            showHelpModal('Especialidades', helpData.specialties, null, null, 'specialty');
+        });
+
+        // Función para mostrar ayuda
+        function showHelpModal(title, items, primaryField, secondaryField, targetField) {
+            const modal = document.getElementById('help-modal');
+            const titleElement = document.getElementById('help-modal-title');
+            const contentElement = document.getElementById('help-modal-content');
+            
+            titleElement.textContent = title;
+            contentElement.innerHTML = '';
+            
+            if (items.length === 0) {
+                contentElement.innerHTML = '<p class="text-gray-500 py-2">No hay opciones disponibles</p>';
+            } else {
+                items.forEach(item => {
+                    const displayText = typeof item === 'string' ? item : 
+                        `${item[primaryField]}${secondaryField ? ` (${item[secondaryField]})` : ''}`;
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'help-item';
+                    itemElement.innerHTML = `
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2">
+                            <span>${displayText}</span>
+                        </label>
+                    `;
+                    contentElement.appendChild(itemElement);
+                });
+            }
+            
+            // Configurar botón Aplicar
+            document.getElementById('apply-help').onclick = function() {
+                const selected = [];
+                contentElement.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                    selected.push(checkbox.nextElementSibling.textContent.split(' (')[0].trim());
+                });
+                
+                document.getElementById(targetField).value = selected.join(', ');
+                modal.classList.add('hidden');
+            };
+            
+            modal.classList.remove('hidden');
+        }
+
+        // Ejecutar búsqueda
+        document.getElementById('execute-search').addEventListener('click', function() {
+            // Filtrar datos (simplificado para ejemplo)
+            const filtered = contractsData.filter(contract => {
+                const codeFilter = document.getElementById('contract-code').value;
+                if (codeFilter && !contract.code.includes(codeFilter)) return false;
+                
+                const typeFilter = document.getElementById('contract-type').value;
+                if (typeFilter && contract.type !== typeFilter) return false;
+                
+                return true;
+            });
+            
+            // Mostrar resultados
+            showResults(filtered);
+            
+            // Cerrar modal
+            document.getElementById('search-modal').classList.add('hidden');
+        });
+
+        // Mostrar resultados
+        function showResults(results) {
+            const tbody = document.getElementById('results-body');
+            tbody.innerHTML = '';
+            
+            results.forEach(contract => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2 px-4 border text-center"><input type="checkbox"></td>
+                    <td class="py-2 px-4 border">${contract.code}</td>
+                    <td class="py-2 px-4 border">${contract.type === 'propio' ? 'A nombre propio' : 'Sociedad'}</td>
+                    <td class="py-2 px-4 border">${contract.type === 'propio' ? contract.professional : contract.society}</td>
+                    <td class="py-2 px-4 border">${contract.specialty}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('results').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

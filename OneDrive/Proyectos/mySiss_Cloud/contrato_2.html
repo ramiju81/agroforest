@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contratos - mySiss</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --mysiss-purple: #800080;
+            --mysiss-light-purple: #EBE3F2;
+            --mysiss-hover-purple: #DFD1EE;
+        }
+
+        .custom-radio {
+            accent-color: var(--mysiss-purple);
+        }
+
+        .focus-outline:focus-visible {
+            outline: 2px solid var(--mysiss-purple);
+            outline-offset: 2px;
+        }
+
+        .hidden { display: none; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .medico-inactivo {
+            opacity: 0.6;
+            background-color: #f3f4f6;
+        }
+        
+        .sidebar {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          height: 100vh;
+          padding: 20px;
+          position: relative;
+        }
+        
+        /* Estilos para la tabla de contratos */
+        .contract-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .contract-table th, .contract-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .contract-table th {
+            background-color: var(--mysiss-light-purple);
+        }
+        
+        .search-filters {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body class="flex h-screen w-full overflow-hidden">
+    <!-- Sidebar -->
+    <div class="w-48 h-full bg-[var(--mysiss-light-purple)] flex flex-col">
+        <div class="p-6">
+            <h1 class="text-[var(--mysiss-purple)] text-4xl font-bold">mySiss</h1>
+        </div>
+        <nav class="mt-4 flex flex-col" aria-label="Menú principal">
+            <a href="configuracion.html" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors focus-outline">
+                Configuración
+            </a>
+            <a href="cargue" id="templates-link" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors mt-2 focus-outline">
+                Data maestra
+            </a>
+            <a href="contratos.html" id="config-link" style="text-decoration: underline;" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors mt-2 focus-outline">
+                Contratos
+            </a>
+            <a href="login.html" 
+               class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors focus-outline"
+                    style="position: absolute; bottom: 20px;">
+               Cerrar sesión
+            </a>
+        </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 bg-white p-8 overflow-auto">
+        <!-- Sección Contratos -->
+        <div id="contracts-section" class="ml-[50px] mt-2 max-w-6xl">
+		<div class="flex flex-col gap-2">
+		  <h3 class="text-lg font-medium">Contratos</h3>
+		  <div class="flex gap-2">
+			<!-- Botón de búsqueda (lupa) - Se mantiene como estaba -->
+			<button id="search-btn"  class="flex items-center gap-2 bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+			  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+				<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+			  </svg>
+			</button>
+
+			<!-- Botón NUEVO con hoja doblada (para contratos) -->
+			<button id="new-contract-btn"  class="flex items-center gap-2 bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+			  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+				<path d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6z" />
+				<path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1h3.5a.5.5 0 010 1H5v9h10V5h-1.5a.5.5 0 010-1H15V3a1 1 0 00-1-1H6z" clip-rule="evenodd" />
+			  </svg>
+			</button>
+		  </div>
+		</div>
+            <!-- Filtros de búsqueda (inicialmente ocultos) -->
+            <div id="search-filters" class="search-filters hidden">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Activo</label>
+                        <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Código contrato</label>
+                        <div class="flex gap-2">
+                            <input type="text" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                            <button class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--mysiss-purple)]" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Vigencia desde</label>
+                        <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Vigencia hasta</label>
+                        <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                    </div>
+                </div>
+                
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Contrato</label>
+                        <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                            <option value="">Todos</option>
+                            <option value="propio">A nombre propio</option>
+                            <option value="sociedad">Sociedad</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Profesional</label>
+                        <div class="flex gap-2">
+                            <input type="text" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                            <button class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--mysiss-purple)]" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Sociedad</label>
+                        <div class="flex gap-2">
+                            <input type="text" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                            <button class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--mysiss-purple)]" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
+                        <div class="flex gap-2">
+                            <input type="text" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--mysiss-purple)]">
+                            <button class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--mysiss-purple)]" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end mt-4">
+                    <button id="execute-search" class="bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resultados de búsqueda -->
+            <div id="search-results" class="mt-6 hidden">
+                <table class="contract-table w-full">
+                    <thead>
+                        <tr>
+                            <th>Selección</th>
+                            <th>Código</th>
+                            <th>Tipo</th>
+                            <th>Profesional</th>
+                            <th>Vigencia</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Ejemplo de fila de contrato -->
+                        <tr>
+                            <td><input type="checkbox" class="contract-select"></td>
+                            <td>CTR-2023-001</td>
+                            <td>A nombre propio</td>
+                            <td>Dr. Juan Pérez</td>
+                            <td>01/01/2023 - 31/12/2023</td>
+                            <td>Activo</td>
+                            <td>
+                                <button class="edit-btn text-[var(--mysiss-purple)] hover:text-purple-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Más filas se agregarían dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Detalle del contrato (se muestra al seleccionar uno) -->
+            <div id="contract-detail" class="mt-6 hidden">
+                <div class="bg-[var(--mysiss-light-purple)] p-4 rounded-md">
+                    <h3 class="text-lg font-semibold mb-4">Detalle del Contrato</h3>
+                    
+                    <!-- Contenido dinámico según tipo de contrato -->
+                    <div id="own-name-detail">
+                        <!-- Detalle para "A nombre propio" -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Profesional</label>
+                                <p class="mt-1">Dr. Juan Pérez</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Especialidad</label>
+                                <p class="mt-1">Cardiología</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Vigencia</label>
+                                <p class="mt-1">01/01/2023 - 31/12/2023</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Estado</label>
+                                <p class="mt-1">Activo</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="society-detail" class="hidden">
+                        <!-- Detalle para "Sociedad" -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Sociedad</label>
+                                <p class="mt-1">Clínica del Norte S.A.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Representante</label>
+                                <p class="mt-1">Dr. Carlos Gómez</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Vigencia</label>
+                                <p class="mt-1">01/01/2023 - 31/12/2023</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Estado</label>
+                                <p class="mt-1">Activo</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex justify-end">
+                        <button id="save-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors flex items-center gap-2 hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar/ocultar filtros de búsqueda
+        document.getElementById('search-btn').addEventListener('click', function() {
+            const filters = document.getElementById('search-filters');
+            filters.classList.toggle('hidden');
+        });
+        
+        // Ejecutar búsqueda
+        document.getElementById('execute-search').addEventListener('click', function() {
+            document.getElementById('search-results').classList.remove('hidden');
+        });
+        
+        // Selección de contrato para ver detalle
+        document.querySelectorAll('.contract-select').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const contractDetail = document.getElementById('contract-detail');
+                if (this.checked) {
+                    contractDetail.classList.remove('hidden');
+                    
+                    // Determinar tipo de contrato y mostrar el detalle correspondiente
+                    const row = this.closest('tr');
+                    const contractType = row.cells[2].textContent.trim();
+                    
+                    if (contractType === 'A nombre propio') {
+                        document.getElementById('own-name-detail').classList.remove('hidden');
+                        document.getElementById('society-detail').classList.add('hidden');
+                    } else {
+                        document.getElementById('own-name-detail').classList.add('hidden');
+                        document.getElementById('society-detail').classList.remove('hidden');
+                    }
+                } else {
+                    contractDetail.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Habilitar edición
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Aquí se implementaría la lógica para habilitar la edición
+                // y mostrar el botón de guardar
+                document.getElementById('save-btn').classList.remove('hidden');
+                
+                // Mostrar mensaje de confirmación al guardar
+                document.getElementById('save-btn').addEventListener('click', function() {
+                    alert('Cambios guardados correctamente');
+                    this.classList.add('hidden');
+                });
+            });
+        });
+        
+        // Botón Nuevo Contrato
+        document.getElementById('new-contract-btn').addEventListener('click', function() {
+            // Aquí se implementaría la lógica para crear un nuevo contrato
+            alert('Funcionalidad de nuevo contrato');
+        });
+    </script>
+</body>
+</html>

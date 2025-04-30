@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formularios de Justificación</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: Arial, sans-serif;
+    }
+    .popup {
+      display: none;
+      width: 413px;
+      height: 455px;
+      background-color: white;
+      border-radius: 6px;
+      padding: 14px;
+      box-shadow: 0 0 7px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      overflow-y: auto;
+      box-sizing: border-box;
+      z-index: 1000;
+    }
+    .popup h3 {
+      margin-top: 0;
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+    .cerrar-popup {
+      position: absolute;
+      top: 11px;
+      right: 11px;
+      width: 17px;
+      height: 17px;
+      background-color: #e0e0e0;
+      border: 1px solid #b0b0b0;
+      border-radius: 50%;
+      color: white;
+      font-size: 11px;
+      line-height: 15px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .campo {
+      margin-bottom: 13px;
+    }
+    .campo label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #000;
+      font-size: 12px;
+    }
+    .campo p {
+      margin: 4px 0;
+      color: #000;
+      font-size: 12px;
+    }
+    .campo input[type="text"],
+    .campo select,
+    .campo textarea {
+      width: 100%;
+      padding: 7px;
+      border: 1px solid #d0d0d0;
+      border-radius: 3px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+    .campo textarea {
+      height: 70px;
+      resize: vertical;
+    }
+    .campo input[readonly],
+    .campo textarea[readonly] {
+      background-color: #f8f8f8;
+      color: #505050;
+      border-color: #e0e0e0;
+    }
+    .btn-guardar {
+      padding: 8px 17px;
+      background-color: #800080;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 14px;
+      width: 100%;
+      font-size: 11px;
+    }
+    .btn-agregar {
+      padding: 7px 14px;
+      background-color: #e0e0e0;
+      color: #000;
+      border: 1px solid #b0b0b0;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 18px auto 7px;
+      display: block;
+      font-size: 11px;
+      text-align: center;
+    }
+    .btn-agregar::before {
+      content: "+";
+      margin-right: 6px;
+      font-weight: bold;
+      color: #fff;
+      background: #a0a0a0;
+      border-radius: 50%;
+      width: 13px;
+      height: 13px;
+      display: inline-block;
+      line-height: 13px;
+      font-size: 10px;
+    }
+    .respuesta-liquidador {
+      font-weight: bold;
+    }
+    .datos-cabecera {
+      margin-bottom: 14px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Formulario 1 -->
+<div id="popupForm1" class="popup">
+    <span class="cerrar-popup">×</span>
+    <h3>Formulario de Justificación</h3>
+    
+    <div class="campo datos-cabecera">
+      <p><b>Fecha:</b> 2025-04-05</p>
+      <p><b>Orden:</b> 007</p>
+      <p><b>Caso:</b> 50006</p>
+      <p><b>Prestación:</b> 890201</p>
+      <p><b>Descripción:</b> Consulta externa</p>
+    </div>
+    
+    <div class="campo">
+      <label for="motivo1">Motivo:</label>
+      <select id="motivo1">
+        <option selected></option>
+		<option>Diferencia en Tarifas</option>
+        <option>Duplicidad registros</option>
+        <option>Deducciones no justificadas</option>
+        <option>Inconsistencia en codigos</option>
+      </select>
+    </div>
+    
+    <div class="campo">
+      <label for="detalle1">Detalle:</label>
+      <textarea id="detalle1" placeholder="Escriba el detalle aquí…"></textarea>
+    </div>
+    
+    <button class="btn-guardar" onclick="guardarFormulario(1)">Guardar</button>
+</div>
+
+<!-- Formulario 2 -->
+<div id="popupForm2" class="popup">
+    <span class="cerrar-popup">×</span>
+    <h3>Formulario de Justificación</h3>
+    
+    <div class="campo datos-cabecera">
+      <p><b>Fecha:</b> 2025-04-05</p>
+      <p><b>Orden:</b> 007</p>
+      <p><b>Caso:</b> 50006</p>
+      <p><b>Prestación:</b> 890201</p>
+      <p><b>Descripción:</b> Consulta externa</p>
+      <p><b>Motivo:</b> Diferencia en Tarifas</p>
+	  </div>
+    
+    <div class="campo">
+      <label>Detalle:</label>
+      <input type="text" value="valores incorrectos" readonly>
+    </div>
+    
+    <div class="campo">
+      <label>Respuesta liquidador:</label>
+      <input type="text" value="Se revisa y se genera cuenta por pagar." readonly>
+    </div>
+    
+  <!-- Sección que aparecerá al hacer clic en Agregar (inicialmente oculta) -->
+  <div id="seccion-respuesta" style="display: none;">
+    <div class="campo">
+      <label class="respuesta-liquidador">Respuesta liquidador:</label>
+      <textarea placeholder="Escriba el detalle aquí…"></textarea>
+    </div>
+    
+    <button class="btn-guardar" onclick="guardarFormulario(2)">Guardar</button>
+  </div>
+  
+  <!-- Botón Agregar (desaparecerá al hacer clic) -->
+  <button id="btn-agregar" class="btn-agregar">Agregar</button>
+
+</div>
+
+<!-- Formulario 3 -->
+<div id="popupForm3" class="popup">
+    <span class="cerrar-popup">×</span>
+    <h3>Formulario de Justificación</h3>
+    
+    <div class="campo datos-cabecera">
+      <p><b>Fecha:</b> 2025-04-05</p>
+      <p><b>Orden:</b> 007</p>
+      <p><b>Caso:</b> 50006</p>
+      <p><b>Prestación:</b> 890201</p>
+      <p><b>Descripción:</b> Consulta externa</p>
+      <p><b>Motivo:</b> Diferencia en Tarifas</p>
+    </div>
+    
+    <div class="campo">
+      <label>Detalle:</label>
+      <input type="text" value="valores incorrectos" readonly>
+    </div>
+    
+    <div class="campo">
+      <label>Respuesta liquidador:</label>
+      <input type="text" value="Se revisa y se genera cuenta por pagar." readonly>
+    </div>
+    
+    <div class="campo">
+      <label>Respuesta medico:</label>
+      <input type="text" value="Ok quedo atento a la nota" readonly>
+    </div>
+	
+  <!-- Sección que aparecerá al hacer clic en Agregar (inicialmente oculta) -->
+  <div id="seccion-respuesta-form3" style="display: none;">
+    <div class="campo">
+      <label class="respuesta-liquidador">Respuesta final:</label>
+      <textarea id="respuesta-final-form3" placeholder="Escriba su respuesta aquí…"></textarea>
+    </div>
+    
+    <button class="btn-guardar" onclick="guardarFormulario(3)">Guardar Respuesta</button>
+  </div>
+  
+  <!-- Botón Agregar (desaparecerá al hacer clic) -->
+  <button id="btn-agregar-form3" class="btn-agregar">Agregar Respuesta</button>
+
+</div>
+
+<!-- Formulario 4 -->
+<div id="popupForm4" class="popup">
+    <span class="cerrar-popup">×</span>
+    <h3>Formulario de Justificación</h3>
+    
+    <div class="campo datos-cabecera">
+      <p><b>Fecha:</b> 2025-04-05</p>
+      <p><b>Orden:</b> 007</p>
+      <p><b>Caso:</b> 50006</p>
+      <p><b>Prestación:</b> 890201</p>
+      <p><b>Descripción:</b> Consulta externa</p>
+      <p><b>Motivo:</b> Diferencia en Tarifas</p>
+    </div>
+    
+    <div class="campo">
+      <label>Detalle:</label>
+      <input type="text" value="valores incorrectos" readonly>
+    </div>
+    
+    <div class="campo">
+      <label class="respuesta-liquidador">Respuesta liquidador:</label>
+      <textarea placeholder="Escriba el detalle aquí…"></textarea>
+    </div>
+    
+    <button class="btn-guardar" onclick="guardarFormulario(4)">Guardar</button>
+
+</div>
+
+<!-- Formulario 5 -->
+<div id="popupForm5" class="popup">
+    <span class="cerrar-popup">×</span>
+    <h3>Formulario de Justificación</h3>
+    
+    <div class="campo datos-cabecera">
+      <p><b>Fecha:</b> 2025-04-05</p>
+      <p><b>Orden:</b> 007</p>
+      <p><b>Caso:</b> 50006</p>
+      <p><b>Prestación:</b> 890201</p>
+      <p><b>Descripción:</b> Consulta externa</p>
+      <p><b>Motivo:</b> Diferencia en Tarifas</p>
+	  </div>
+    
+    <div class="campo">
+      <label>Detalle:</label>
+      <input type="text" value="valores incorrectos" readonly>
+    </div>
+    
+    <div class="campo">
+      <label>Respuesta liquidador:</label>
+      <input type="text" value="Se revisa y se genera cuenta por pagar." readonly>
+    </div>
+    
+    <button class="btn-agregar">Agregar</button>
+
+</div>
+
+<script>
+// Mostrar solo el formulario solicitado
+window.onload = function() {
+  const hash = window.location.hash;
+  if (hash) {
+    const form = document.querySelector(hash);
+    if (form) form.style.display = 'block';
+  }
+};
+
+// Cerrar formularios
+document.querySelectorAll('.cerrar-popup').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.closest('.formulario').style.display = 'none';
+    window.parent.postMessage('cerrar', '*');
+  });
+});
+  // Mostrar el formulario correspondiente según el hash de la URL
+  window.onload = function() {
+    const hash = window.location.hash;
+    if (hash) {
+      const form = document.querySelector(hash);
+      if (form) {
+        form.style.display = 'block';
+      }
+    }
+  };
+    // Manejar el cierre de los formularios
+  document.querySelectorAll('.cerrar-popup').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.closest('.popup').style.display = 'none';
+      window.parent.postMessage('cerrar', '*');
+    });
+  });
+
+  // También permitir cerrar con ESC
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.popup').forEach(popup => {
+        popup.style.display = 'none';
+      });
+      window.parent.postMessage('cerrar', '*');
+    }
+  });
+
+  // Función para guardar el formulario
+  function guardarFormulario(formId) {
+    let datos = {};
+    
+    // Recopilar datos según el formulario
+    if (formId === 1) {
+      datos = {
+        motivo: document.getElementById('motivo1').value,
+        detalle: document.getElementById('detalle1').value
+      };
+      
+      if (!datos.detalle) {
+        alert("Por favor complete el campo detalle");
+        return;
+      }
+    } 
+    else if (formId === 4 || formId === 5) {
+      const textarea = document.querySelector(`#popupForm${formId} textarea`);
+      datos.respuesta = textarea.value;
+      
+      if (!datos.respuesta) {
+        alert("Por favor complete la respuesta");
+        return;
+      }
+    }
+    
+    // Simular guardado (aquí iría tu lógica real)
+    console.log(`Guardando formulario ${formId}:`, datos);
+    
+    // Notificar a la ventana padre que se guardó
+    setTimeout(() => {
+      window.parent.postMessage('guardado', '*');
+      
+      // Limpiar campos editables
+      if (formId === 1) {
+        document.getElementById('detalle1').value = '';
+      } else if (formId === 4 || formId === 5) {
+        document.querySelector(`#popupForm${formId} textarea`).value = '';
+      }
+    }, 1000);
+  }
+
+  // Manejar el botón agregar
+  document.querySelectorAll('.btn-agregar').forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Lógica para agregar nuevo elemento
+      console.log("Agregar nuevo elemento");
+      window.parent.postMessage('agregar', '*');
+    });
+  });
+    // Manejar el botón agregar en el Formulario 2
+  document.getElementById('btn-agregar').addEventListener('click', function() {
+    // Ocultar el botón Agregar
+    this.style.display = 'none';
+    
+    // Mostrar la sección de respuesta y botón Guardar
+    document.getElementById('seccion-respuesta').style.display = 'block';
+    
+    // Hacer scroll hasta el textarea para mejor experiencia de usuario
+    document.querySelector('#seccion-respuesta textarea').focus();
+  });
+  
+    // Manejar el botón agregar en el Formulario 3
+  document.getElementById('btn-agregar-form3').addEventListener('click', function() {
+    // Ocultar el botón Agregar
+    this.style.display = 'none';
+    
+    // Mostrar la sección de respuesta y botón Guardar
+    document.getElementById('seccion-respuesta-form3').style.display = 'block';
+    
+    // Hacer scroll y enfocar el textarea
+    document.getElementById('respuesta-final-form3').focus();
+  });
+  
+  // Función de guardado para el Formulario 3
+  function guardarFormulario(formId) {
+    if (formId === 3) {
+      const respuestaFinal = document.getElementById('respuesta-final-form3').value;
+      
+      if (!respuestaFinal) {
+        alert("Por favor complete la respuesta final");
+        return;
+      }
+      
+      // Aquí iría la lógica para guardar la respuesta
+      console.log("Guardando respuesta final:", respuestaFinal);
+      
+      // Simular guardado exitoso
+      setTimeout(() => {
+        window.parent.postMessage('guardado', '*');
+        
+        // Opcional: limpiar el textarea después de guardar
+        document.getElementById('respuesta-final-form3').value = '';
+        
+        // Opcional: volver al estado inicial
+        document.getElementById('seccion-respuesta-form3').style.display = 'none';
+        document.getElementById('btn-agregar-form3').style.display = 'block';
+      }, 1000);
+    }
+  }
+</script>
+</body>
+</html>

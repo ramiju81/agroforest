@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Medical Fees mySiss</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: white;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: purple;
+            font-weight: bold;
+            font-size: 50px;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #660099;
+        }
+
+        input {
+            width: 250px;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #660099;
+            border-radius: 5px;
+        }
+
+        .button {
+            background-color: #a3338a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #a3338a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 15px;
+        }
+
+        .link {
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .link a {
+            color: #a3338a;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+	
+	<logo de mysiss tamaño 300px>
+        <img src="img\mysiss.png" alt="Logo mySiss" style="width: 300px; height: auto; display: block; margin: 0 auto;">
+
+    
+    <label for="usuario">Usuario:</label><br>
+        <input type="text" id="usuario" autocomplete="off"><br><br>
+
+        <label for="password">Contraseña:</label><br>
+        <input type="password" id="password"><br>
+        <div class="link">
+            <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button class="button" onclick="login()">Ingresar</button>
+
+        <p id="mensaje" class="error-message"></p>
+    </div>
+
+    <button class="logout" onclick="location.reload()">Salir</button>
+
+    <script>
+        // Definir un contador de intentos
+        
+		let intentos = 0;
+
+function login() {
+    const usuario = document.getElementById("usuario").value.trim();
+    const passwordInput = document.getElementById("password");
+    const password = passwordInput.value;
+    const mensaje = document.getElementById("mensaje");
+
+    // Restablecer mensaje de error
+    mensaje.textContent = "";
+    mensaje.style.color = "red"; // Color por defecto para mensajes de error
+
+    let destino = "";
+
+    // Verificación de usuarios y contraseñas
+    if (usuario === "jramirez" && password === "1234567") {
+        destino = "validacion_med.html";
+    } else if (usuario === "jpmora" && password === "1234567") {
+        destino = "Honorarios.html";
+    } else if (usuario === "honorarios" && password === "1234567") {
+        destino = "cargue.html";
+    } else if (usuario === "mySiss" && password === "1234567") {
+        destino = "seguridad.html";
+    } 
+
+
+    if (destino !== "") {
+        // Acceso correcto
+        window.location.href = destino;
+    } else {
+        // Acceso incorrecto
+        intentos++;
+
+        if (intentos === 3) {
+            mensaje.textContent = "Advertencia: Estás a punto de bloquear tu cuenta si sigues ingresando mal la contraseña.";
+        } else if (intentos >= 4) {
+            mensaje.textContent = "⚠ Cuenta bloqueada por exceso de intentos fallidos.";
+            alert("⚠ ACCESO BLOQUEADO\nHas superado el número máximo de intentos permitidos.");
+
+            // Desactivar todos los campos y botones
+            document.getElementById("usuario").disabled = true;
+            passwordInput.disabled = true;
+            document.querySelector(".button").disabled = true;
+        } else {
+            mensaje.textContent = `Usuario y/o clave inválida. Intento ${intentos} de 5.`;
+        }
+
+        // Limpiar solo el campo de contraseña
+        passwordInput.value = "";
+    }
+}
+
+    </script>
+	
+    <!-- Modal de recuperación -->
+    <div id="modalRecuperar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+        <div style="background:white; padding:30px; border-radius:15px; width:350px; text-align:left; position:relative;">
+            <h2 style="color:purple; text-align:center;">Recuperar Contraseña</h2>
+            
+            <label for="cedula">Cédula:</label><br>
+            <input type="text" id="cedula" style="width:100%;"><br><br>
+
+            <label for="correo">Correo Electrónico:</label><br>
+            <input type="email" id="correo" style="width:100%;"><br><br>
+
+            <button class="button" onclick="enviarRecuperacion()" style="width:100%;">Enviar solicitud</button>
+            <p id="mensajeRecuperar" class="error-message" style="text-align:center;"></p>
+
+            <button onclick="cerrarModal()" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:18px; cursor:pointer;">✖</button>
+        </div>
+    </div>
+
+    <script>
+        // Abre el modal
+        document.querySelector('.link a').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById("modalRecuperar").style.display = "flex";
+        });
+
+        // Cierra el modal
+        function cerrarModal() {
+            document.getElementById("modalRecuperar").style.display = "none";
+            document.getElementById("mensajeRecuperar").textContent = "";
+            document.getElementById("cedula").value = "";
+            document.getElementById("correo").value = "";
+        }
+
+        // Envía la solicitud de recuperación
+			function enviarRecuperacion() {
+			const cedula = document.getElementById("cedula").value.trim();
+			const correo = document.getElementById("correo").value.trim();
+			const mensaje = document.getElementById("mensajeRecuperar");
+
+			mensaje.textContent = "";
+
+			if (cedula === "" || correo === "") {
+			mensaje.textContent = "Por favor completa todos los campos.";
+			return;
+			}
+
+			// Simula el envío (se puede conectar a un backend o script de correo más adelante)
+			mensaje.style.color = "green";
+			mensaje.textContent = "Si los datos son válidos, recibirás un correo para restablecer tu contraseña.";
+
+			// Redirigir a recuperar.html después de enviar la solicitud
+			setTimeout(() => {
+			window.location.href = "recuperar.html";
+			}, 7000); // Espera 7 segundos para mostrar el mensaje de éxito
+}
+    </script>
+	
+<script>
+    // Abre el modal cuando se hace clic en el link de recuperación
+    document.querySelector('.link a').addEventListener('click', function (e) {
+        e.preventDefault();  // Prevenir la redirección por defecto del link
+        document.getElementById("modalRecuperar").style.display = "flex"; // Mostrar modal de recuperación
+    });
+</script>
+
+</body>
+</html>

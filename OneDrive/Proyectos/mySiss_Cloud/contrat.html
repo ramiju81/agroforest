@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contratos - mySiss</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style> 
+        :root {
+            --mysiss-purple: #800080;
+            --mysiss-light-purple: #EBE3F2;
+            --mysiss-hover-purple: #DFD1EE;
+        }
+
+        .hidden { display: none; }
+
+#specialty {
+    width: 200px; /* O el ancho que prefieras */
+    min-width: 150px;
+}
+
+/* Asegurar que el modal de ayuda aparezca encima */
+.modal {
+    z-index: 1000;
+}
+
+
+        .search-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 800px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .search-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .contract-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .contract-table th, .contract-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .contract-table th {
+            background-color: var(--mysiss-light-purple);
+        }
+        
+        .search-filters {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .help-modal {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .help-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .help-item:hover {
+            background-color: var(--mysiss-light-purple);
+        }
+		
+		  /* Estilos para el modal de ayuda */
+		  .help-modal-container {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 400px;
+			max-width: 90%;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			z-index: 1002;
+			padding: 20px;
+			max-height: 80vh;
+			overflow-y: auto;
+		  }
+		  
+		  .help-modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 15px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #eee;
+		  }
+		  
+		  .help-modal-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: var(--mysiss-purple);
+		  }
+		  
+		  .help-modal-close {
+			cursor: pointer;
+			background: none;
+			border: none;
+			font-size: 20px;
+			color: #666;
+		  }
+		  
+		  .help-item {
+			padding: 8px 12px;
+			margin: 4px 0;
+			border-radius: 4px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+		  }
+		  
+		  .help-item:hover {
+			background-color: var(--mysiss-light-purple);
+		  }
+		  
+		  .help-item input[type="checkbox"] {
+			margin-right: 10px;
+			accent-color: var(--mysiss-purple);
+		  }
+		  
+		  .help-modal-apply {
+			margin-top: 15px;
+			width: 100%;
+			padding: 8px 16px;
+			background-color: var(--mysiss-purple);
+			color: white;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		  }
+		  
+		  .help-modal-apply:hover {
+			background-color: #6b006b;
+		  }
+    </style>
+</head>
+<body class="flex h-screen w-full overflow-hidden">
+    <!-- Sidebar -->
+    <div class="w-48 h-full bg-[var(--mysiss-light-purple)] flex flex-col">
+        <div class="p-6">
+            <h1 class="text-[var(--mysiss-purple)] text-4xl font-bold">mySiss</h1>
+        </div>
+        <nav class="mt-4 flex flex-col" aria-label="Menú principal">
+            <a href="configuracion.html" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors">
+                Configuración
+            </a>
+            <a href="cargue" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors mt-2">
+                Data maestra
+            </a>
+            <a href="contratos.html" style="text-decoration: underline;" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors mt-2">
+                Contratos
+            </a>
+            <a href="login.html" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors" style="position: absolute; bottom: 20px;">
+               Cerrar sesión
+            </a>
+        </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 bg-white p-8 overflow-auto">
+        <div id="contracts-section" class="ml-[50px] mt-2 max-w-6xl">
+            <div class="flex flex-col gap-2">
+                <h3 class="text-lg font-medium">Contratos</h3>
+                <div class="flex gap-2">
+                    <!-- Botón de búsqueda -->
+                    <button id="search-btn" class="flex items-center gap-2 bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                        Buscar
+                    </button>
+
+                    <!-- Botón Nuevo -->
+                    <button id="new-contract-btn" class="flex items-center gap-2 bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6z" />
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1h3.5a.5.5 0 010 1H5v9h10V5h-1.5a.5.5 0 010-1H15V3a1 1 0 00-1-1H6z" clip-rule="evenodd" />
+                        </svg>
+                        Nuevo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resultados de búsqueda -->
+            <div id="search-results" class="mt-6 hidden">
+                <table class="contract-table w-full">
+                    <thead>
+                        <tr>
+                            <th>Selección</th>
+                            <th>Contrato</th>
+                            <th>Vigencia Inicial</th>
+                            <th>Vigencia Final</th>
+                            <th>Tipo Contrato</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contracts-table-body">
+                        <!-- Resultados dinámicos -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de búsqueda -->
+    <div id="search-modal-overlay" class="search-modal-overlay hidden"></div>
+    <div id="search-modal" class="search-modal hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Búsqueda de Contratos</h3>
+            <button id="close-search-modal" class="text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
+        <div class="search-filters">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Activo</label>
+                    <select id="active-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                        <option value="all">Todos</option>
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Código contrato</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="contract-code" class="flex-1 border border-gray-300 rounded-md px-3 py-2">
+                        <button id="contract-code-help" class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--mysiss-purple)]" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vigencia desde</label>
+                    <input type="date" id="validity-from" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                </div>
+                
+                <div class="filter-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vigencia hasta</label>
+                    <input type="date" id="validity-to" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                </div>
+            </div>
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Contrato</label>
+                    <select id="contract-type" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                        <option value="">Todos</option>
+                        <option value="propio">A nombre propio</option>
+                        <option value="sociedad">Sociedad</option>
+                    </select>
+                </div>
+                
+                <div id="professional-group" class="filter-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Profesional</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="professional" class="flex-1 border border-gray-300 rounded-md px-3 py-2">
+                        <button id="professional-help" class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--mysiss-purple)]" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="specialty" class="flex-1 border border-gray-300 rounded-md px-3 py-2">
+                        <button id="specialty-help" class="bg-[var(--mysiss-light-purple)] hover:bg-[var(--mysiss-hover-purple)] px-3 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--mysiss-purple)]" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end mt-4">
+                <button id="execute-search" class="bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                    Buscar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de ayuda -->
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content help-modal">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold" id="help-modal-title">Ayuda</h3>
+                <button id="close-help-modal" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="help-modal-content">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+    </div>
+	
+	<!-- Modal de ayuda -->
+<!-- Modal de ayuda (NUEVO - Pegar esto) -->
+<div id="help-modal" class="hidden">
+  <div class="help-modal-container">
+    <div class="help-modal-header">
+      <h3 class="help-modal-title" id="help-modal-title">Ayuda</h3>
+      <button id="close-help-modal" class="help-modal-close">
+        &times;
+      </button>
+    </div>
+    <div id="help-modal-content">
+      <!-- JavaScript insertará contenido aquí automáticamente -->
+    </div>
+    <button id="apply-help-selection" class="help-modal-apply">Aplicar selección</button>
+  </div>
+</div>
+
+
+    <script>
+        // Datos de ejemplo
+const helpData = {
+    contractCodes: [
+        { code: "CON0001", description: "Contrato Dr. Juan Pérez - Cardiología" },
+        { code: "CON0002", description: "Contrato Clínica del Norte - Ortopedia" },
+        { code: "CON0005", description: "Contrato Dr. Andrés López - Neurología" }
+    ],
+    professionals: [
+        { id: 1, name: "Dr. Juan Pérez", specialty: "Cardiología" },
+        { id: 2, name: "Dr. Carlos Rodríguez", specialty: "Ortopedia" },
+        { id: 3, name: "Dr. Andrés López", specialty: "Neurología" }
+    ],
+    specialties: [
+        "Cardiología", 
+        "Ortopedia", 
+        "Neurología",
+        "Pediatría",
+        "Ginecología"
+    ]
+};
+        // Mostrar modal de búsqueda
+        document.getElementById('search-btn').addEventListener('click', function() {
+            document.getElementById('search-modal-overlay').classList.remove('hidden');
+            document.getElementById('search-modal').classList.remove('hidden');
+        });
+
+        // Cerrar modal de búsqueda
+        document.getElementById('close-search-modal').addEventListener('click', function() {
+            document.getElementById('search-modal-overlay').classList.add('hidden');
+            document.getElementById('search-modal').classList.add('hidden');
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('search-modal-overlay').addEventListener('click', function() {
+            document.getElementById('search-modal-overlay').classList.add('hidden');
+            document.getElementById('search-modal').classList.add('hidden');
+        });
+
+        // Ejecutar búsqueda
+        document.getElementById('execute-search').addEventListener('click', function() {
+            // Cerrar modal
+            document.getElementById('search-modal-overlay').classList.add('hidden');
+            document.getElementById('search-modal').classList.add('hidden');
+            
+            // Mostrar resultados
+            displayResults(contractsData);
+        });
+
+        // Mostrar resultados
+        function displayResults(results) {
+            const tbody = document.getElementById('contracts-table-body');
+            const resultsContainer = document.getElementById('search-results');
+            
+            tbody.innerHTML = '';
+            
+            results.forEach(contract => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-2 text-center">
+                        <input type="checkbox" class="contract-select">
+                    </td>
+                    <td class="px-4 py-2">${contract.code}</td>
+                    <td class="px-4 py-2">${formatDate(contract.validityFrom)}</td>
+                    <td class="px-4 py-2">${formatDate(contract.validityTo)}</td>
+                    <td class="px-4 py-2">${contract.type === 'propio' ? 'A nombre propio' : 'Sociedad'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            resultsContainer.classList.remove('hidden');
+        }
+
+        // Formatear fecha
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES');
+        }
+		
+		// Configurar ayudas de búsqueda
+document.getElementById('contract-code-help').addEventListener('click', function() {
+    showHelpModal('Códigos de Contrato', helpData.contractCodes, 'code', 'description', 'contract-code');
+});
+
+document.getElementById('professional-help').addEventListener('click', function() {
+    showHelpModal('Profesionales', helpData.professionals, 'name', 'specialty', 'professional');
+});
+
+document.getElementById('specialty-help').addEventListener('click', function() {
+    showHelpModal('Especialidades', helpData.specialties, null, null, 'specialty');
+});
+
+// Función para mostrar modal de ayuda
+function showHelpModal(title, items, primaryField, secondaryField, targetField) {
+    const modal = document.getElementById('help-modal');
+    const modalTitle = document.getElementById('help-modal-title');
+    const modalContent = document.getElementById('help-modal-content');
+    
+    modalTitle.textContent = title;
+    modalContent.innerHTML = '';
+    
+    if (items.length === 0) {
+        modalContent.innerHTML = '<p class="text-gray-500 py-4 text-center">No hay datos disponibles</p>';
+    } else {
+        items.forEach(item => {
+            const displayValue = typeof item === 'string' ? item : 
+                (primaryField ? item[primaryField] : '') + 
+                (secondaryField ? ` (${item[secondaryField]})` : '');
+            
+            const itemElement = document.createElement('div');
+            itemElement.className = 'help-item';
+            
+            itemElement.innerHTML = `
+                <label style="display: flex; align-items: center; width: 100%;">
+                    <input type="checkbox" class="mr-2" style="accent-color: var(--mysiss-purple)">
+                    <span>${displayValue}</span>
+                </label>
+            `;
+            
+            modalContent.appendChild(itemElement);
+        });
+    }
+    
+    // Configurar botón de aplicar
+    document.getElementById('apply-help-selection').onclick = function() {
+        const selected = [];
+        modalContent.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            selected.push(checkbox.parentElement.textContent.trim().split(' (')[0]);
+        });
+        
+        document.getElementById(targetField).value = selected.join(', ');
+        modal.classList.add('hidden');
+    };
+    
+    modal.classList.remove('hidden');
+}
+
+// Cerrar modal al hacer clic en la X
+document.getElementById('close-help-modal').addEventListener('click', function() {
+    document.getElementById('help-modal').classList.add('hidden');
+});
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    const helpModal = document.getElementById('help-modal');
+    if (!helpModal.contains(e.target) && e.target.id !== 'contract-code-help' && 
+        e.target.id !== 'professional-help' && e.target.id !== 'specialty-help' &&
+        !e.target.closest('.help-modal-container')) {
+        helpModal.classList.add('hidden');
+    }
+});
+
+        // Botón Nuevo Contrato
+        document.getElementById('new-contract-btn').addEventListener('click', function() {
+            alert('Funcionalidad de nuevo contrato');
+        });
+    </script>
+</body>
+</html>

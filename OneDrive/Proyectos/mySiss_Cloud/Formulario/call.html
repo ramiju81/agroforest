@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formularios con Popups</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #6a1b9a;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #4a148c;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background-color: white;
+      width: 590px;
+      height: 650px;
+      padding: 20px;
+      border-radius: 10px;
+      position: relative;
+      overflow-y: auto;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close::before {
+      content: 'X';
+      color: black;
+      display: block;
+      text-align: center;
+      line-height: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Previsualización de Formularios</h1>
+  <div>
+    <button onclick="abrirModal('modal1')">Formulario 1</button>
+    <button onclick="abrirModal('modal2')">Formulario 2</button>
+    <button onclick="abrirModal('modal3')">Formulario 3</button>
+    <button onclick="abrirModal('modal4')">Formulario 4</button>
+    <button onclick="abrirModal('modal5')">Formulario 5</button>
+  </div>
+
+  <!-- MODAL FORM 1 -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <div class="close" onclick="cerrarModal('modal1')"></div>
+      <h2 style="font-size: 20px; font-weight: bold; color: black;">Formulario de Justificación</h2>
+      <p><strong>Fecha:</strong> 2025-04-05</p>
+      <p><strong>Orden:</strong> 007</p>
+      <p><strong>Caso:</strong> 50006</p>
+      <p><strong>Prestación:</strong> 890201</p>
+      <p><strong>Descripción:</strong> Consulta externa</p>
+      <p><strong>Motivo:</strong>
+        <select>
+          <option selected>Diferencia en Tarifas</option>
+          <option>Duplicidad registros</option>
+          <option>Deducciones no justificadas</option>
+          <option>Inconsistencia en codigos</option>
+        </select>
+      </p>
+      <p><strong>Detalle:</strong><br>
+        <textarea placeholder="Escriba el detalle aquí..." rows="5" style="width: 100%;"></textarea>
+      </p>
+      <button style="background-color: #6a1b9a; color: white; border-radius: 5px; padding: 10px 20px;">Guardar</button>
+    </div>
+  </div>
+
+  <!-- MODAL FORM 2 -->
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <div class="close" onclick="cerrarModal('modal2')"></div>
+      <h2 style="font-size: 20px; font-weight: bold; color: black;">Formulario de Justificación</h2>
+      <p><strong>Fecha:</strong> 2025-04-05</p>
+      <p><strong>Orden:</strong> 007</p>
+      <p><strong>Caso:</strong> 50006</p>
+      <p><strong>Prestación:</strong> 890201</p>
+      <p><strong>Descripción:</strong> Consulta externa</p>
+      <p><strong>Motivo:</strong> Diferencia en Tarifas</p>
+      <p><strong>Detalle:</strong> <input value="valores incorrectos" disabled style="width: 100%;" /></p>
+      <p><strong>Respuesta liquidador:</strong> <input value="Se revisa y se genera cuenta por pagar." disabled style="width: 100%;" /></p>
+      <div style="text-align: center; margin-top: 20px;">
+        <button style="background-color: #eee; color: white; border: 1px solid #ccc; border-radius: 50%; width: 30px; height: 30px;">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FORM 3 -->
+  <div id="modal3" class="modal">
+    <div class="modal-content">
+      <div class="close" onclick="cerrarModal('modal3')"></div>
+      <h2 style="font-size: 20px; font-weight: bold; color: black;">Formulario de Justificación</h2>
+      <p><strong>Fecha:</strong> 2025-04-05</p>
+      <p><strong>Orden:</strong> 007</p>
+      <p><strong>Caso:</strong> 50006</p>
+      <p><strong>Prestación:</strong> 890201</p>
+      <p><strong>Descripción:</strong> Consulta externa</p>
+      <p><strong>Detalle:</strong> <input value="valores incorrectos" disabled style="width: 100%;" /></p>
+      <p><strong>Respuesta liquidador:</strong> <input value="Se revisa y se genera cuenta por pagar." disabled style="width: 100%;" /></p>
+      <p><strong>Respuesta médico:</strong> <input value="Ok quedo atento a la nota" disabled style="width: 100%;" /></p>
+      <div style="text-align: center; margin-top: 20px;">
+        <button style="background-color: #eee; color: white; border: 1px solid #ccc; border-radius: 50%; width: 30px; height: 30px;">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FORM 4 -->
+  <div id="modal4" class="modal">
+    <div class="modal-content">
+      <div class="close" onclick="cerrarModal('modal4')"></div>
+      <h2 style="font-size: 20px; font-weight: bold; color: black;">Formulario de Justificación</h2>
+      <p><strong>Fecha:</strong> 2025-04-05</p>
+      <p><strong>Orden:</strong> 007</p>
+      <p><strong>Caso:</strong> 50006</p>
+      <p><strong>Prestación:</strong> 890201</p>
+      <p><strong>Descripción:</strong> Consulta externa</p>
+      <p><strong>Detalle:</strong> <input value="valores incorrectos" disabled style="width: 100%;" /></p>
+      <p><strong>Respuesta liquidador:</strong></p>
+      <textarea placeholder="Escriba el detalle aquí..." style="width: 100%; height: 100px;"></textarea>
+      <button style="background-color: #6a1b9a; color: white; border-radius: 5px; padding: 10px 20px; margin-top: 10px;">Guardar</button>
+    </div>
+  </div>
+
+  <!-- MODAL FORM 5 -->
+  <div id="modal5" class="modal">
+    <div class="modal-content">
+      <div class="close" onclick="cerrarModal('modal5')"></div>
+      <h2 style="font-size: 20px; font-weight: bold; color: black;">Formulario de Justificación</h2>
+      <p><strong>Fecha:</strong> 2025-04-05</p>
+      <p><strong>Orden:</strong> 007</p>
+      <p><strong>Caso:</strong> 50006</p>
+      <p><strong>Prestación:</strong> 890201</p>
+      <p><strong>Descripción:</strong> Consulta externa</p>
+      <p><strong>Detalle:</strong> <input value="valores incorrectos" disabled style="width: 100%;" /></p>
+      <p><strong>Respuesta liquidador:</strong></p>
+      <textarea style="width: 100%; height: 100px;"></textarea>
+      <button style="background-color: #6a1b9a; color: white; border-radius: 5px; padding: 10px 20px; margin-top: 10px;">Guardar</button>
+    </div>
+  </div>
+
+  <script>
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+    function cerrarModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+  </script>
+</body>
+</html>

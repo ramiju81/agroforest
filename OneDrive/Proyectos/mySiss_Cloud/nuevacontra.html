@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Nueva Contraseña - mySiss</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+      color: #660099;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: block;
+      color: #660099;
+    }
+
+    .input-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 40px 10px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #999;
+    }
+
+    .button {
+      background-color: #a3338a;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #8c2c76;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .success-message {
+      color: green;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Crear Nueva Contraseña</h2>
+    <form id="formContraseña">
+      <label for="nuevaContrasena">Nueva Contraseña</label>
+      <div class="input-container">
+        <input type="password" id="nuevaContrasena" placeholder="Mínimo 8 caracteres" required>
+        <button type="button" class="toggle-password" onclick="togglePassword('nuevaContrasena')">👁</button>
+      </div>
+
+      <label for="confirmarContrasena">Confirmar Contraseña</label>
+      <div class="input-container">
+        <input type="password" id="confirmarContrasena" placeholder="Confirma tu contraseña" required>
+        <button type="button" class="toggle-password" onclick="togglePassword('confirmarContrasena')">👁</button>
+      </div>
+
+      <button type="button" class="button" onclick="validarContraseña()">Crear Contraseña</button>
+
+      <p id="mensaje" class="error-message"></p>
+      <p id="mensajeExito" class="success-message"></p>
+    </form>
+  </div>
+
+  <script>
+    function togglePassword(idCampo) {
+      const campo = document.getElementById(idCampo);
+      campo.type = campo.type === 'password' ? 'text' : 'password';
+    }
+
+    function validarContraseña() {
+      const nuevaContrasena = document.getElementById("nuevaContrasena").value;
+      const confirmarContrasena = document.getElementById("confirmarContrasena").value;
+      const mensaje = document.getElementById("mensaje");
+      const mensajeExito = document.getElementById("mensajeExito");
+
+      mensaje.textContent = "";
+      mensajeExito.textContent = "";
+
+      if (nuevaContrasena.length < 8) {
+        mensaje.textContent = "La contraseña debe tener al menos 8 caracteres.";
+        return;
+      }
+
+      if (nuevaContrasena !== confirmarContrasena) {
+        mensaje.textContent = "Las contraseñas no coinciden.";
+        return;
+      }
+
+      const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+      if (!regex.test(nuevaContrasena)) {
+        mensaje.textContent = "Debe contener una mayúscula, un número y un carácter especial.";
+        return;
+      }
+
+      mensajeExito.textContent = "¡Contraseña creada correctamente!";
+      document.getElementById("formContraseña").reset();
+    }
+  </script>
+
+</body>
+</html>

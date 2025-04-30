@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   <title>Cloud Medical Fees mySiss</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: white;
+    }
+
+    .container {
+      display: flex;
+    }
+
+ 	.sidebar {
+	  width: 180px;
+	  background-color: #eee6f8;
+	  padding: 20px;
+	  height: 100vh;
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: space-between;
+	  
+	}
+	
+	.sidebar-menu {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 10px;
+	  flex-grow: 1; 
+	}
+
+	.sidebar-footer {
+	  margin-top: auto;
+	  margin-bottom: 10px; 
+	}
+	
+	.sidebar a[href="login.html"] {
+	  position: relative;
+	  bottom: 30px;
+	}
+
+	a[href="login.html"] {
+	  position: relative;
+	  bottom: 10px;
+	}
+
+	.logout {
+	  color: purple;
+	  text-decoration: none;
+	  font-weight: bold;
+	}
+	
+    .sidebar h1 {
+		  color: purple;
+		  font-weight: bold;
+		  font-size: 50px;
+		  margin-bottom: 30px;
+
+    }
+
+    .sidebar a {
+      display: block;
+      margin: 20px 0;
+      color: purple;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      background-color: white;
+      padding: 20px 40px;
+    }
+	
+	.radio-group {
+	  display: flex;  
+	  font-size: 18px;
+	  margin-bottom: 10px;
+	}
+	
+	.radio-group label {
+	  display: inline-flex;
+	  align-items: center;
+	  margin-right: 30px;
+	  gap: 0px;
+	}
+
+    .form-section {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    label {
+      min-width: 140px;
+    }
+
+    input, select {
+      padding: 6px;
+      width: 200px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      margin-top: 10px;
+      margin-right: 10px;
+      background-color: purple;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .table-section {
+      background-color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #f0f0f0;
+    }
+	
+th.col-select, td.col-select {
+  width: 20px;
+  min-width: 20px;
+  max-width: 20px;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  position: relative;
+}
+
+td.col-select input[type="checkbox"],
+th.col-select input[type="checkbox"] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0;
+}
+
+    h3 {
+      font-size: 16px;
+      margin-top: 0;
+    }
+	
+	  .subrayado {
+    text-decoration: underline;
+  }
+  td.col-select {
+  position: relative;
+  width: 40px;
+  padding: 0;
+}
+
+.btn-icon {
+  display: inline-block;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: purple; 
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 40px;
+}
+
+.btn-icon:hover {
+  background-color: #b80bd7;
+}
+
+/* Estilos para el modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+}
+    
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  position: relative;
+}
+    
+.close {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+    
+.close:hover {
+  color: black;
+}
+    
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+    
+.modal-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+    
+.modal-buttons .accept {
+  background-color: purple;
+  color: white;
+}
+    
+.modal-buttons .cancel {
+  background-color: #ddd;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+	<div class="sidebar">
+	  <div class="sidebar-content">
+		<h1>mySiss</h1>
+		<a href="honorarios.html" style="text-decoration: underline;">Preliquidacion / Liquidación</a>
+		<a href="validacion_liq.html">Validaciones</a>
+		<a href="reportes_liq.html">Reportes</a>
+	  </div>
+	  <a href="login.html" class="logout">Cerrar sesión</a>
+	</div>
+ 
+  <div class="main">
+      <div class="radio-group">
+		<!-- Radio Buton -->
+        <label><input type="radio" name="tipo" id="pre" checked> Preliquidación</label>
+        <label><input type="radio" name="tipo" id="liq"> Liquidación</label>
+      </div>
+
+      <!-- Preliquidación -->
+      <div id="preliquidacion-section" class="form-section">
+        <div class="form-row">
+          <label>Fecha:</label>
+		<input type="date" id="fechaInicio" />
+		<input type="date" id="fechaFin" />
+
+
+		  <input type="number" id="periodo" min="1" max="12" placeholder="Mes" />
+
+		
+		<span id="btnActualizarWS" class="btn-icon" title="Actualizar Web Service">
+			<i class="fas fa-sync-alt"></i>
+		</span>
+        </div>
+	  
+        <div class="form-row">
+          <label>Aseguradora:</label>
+          <select id="aseguradoraSelect">
+            <option selected value="">Todas</option>
+            <option>Comfenalco EPS</option>
+            <option>SURA EPS</option>
+            <option>Comfandi</option>
+            <option>Cruz Blanca</option> 
+            <option>Coomeva EPS</option>
+            <option>Nueva EPS</option>
+          </select>
+        </div>
+
+        <div class="form-row" style="display: flex; align-items: center; gap: 20px;">
+          <div style="display: flex; align-items: center;">
+            <label for="tipoContrato" style="margin-right: 30px; min-width: 120px;">Tipo liquidación:</label>
+            <select id="tipoContrato" onchange="mostrarEspecialidad(this.value)">
+              <option selected value="">Todos</option>
+              <option value="grupo">Sociedad medica</option>
+              <option value="servicio">Nombre propio</option>
+            </select>
+          </div>
+
+          <div id="especialidadGrupo" style="display: none; align-items: center;">
+            <label for="especialidad" style="min-width: 20px;"></label>
+            <select id="especialidad">
+              <option selected value="">Todas</option>
+              <option>Cardiólogo</option>
+              <option>Anestesiólogo</option>
+              <option>Oftalmólogo</option>
+              <option>Endocrinólogo</option>
+            </select>
+          </div>
+        </div>
+		
+        <div class="form-row">		
+          <label>Profesional:</label>
+          <select id="profesionalSelect">
+            <option selected value="">Todos</option>
+              <option>Palacio Yeny </option>
+              <option>Ramirez Julian </option>
+              <option>López Mario </option>
+              <option>Reyes Camila </option>
+              <option>Ortega Juan </option>
+              <option>Gómez Laura </option>
+            </select>
+          </div>
+		  <div class="form-row">
+		<button class="btn" onclick="filtrarDatos()" title="Visualizar">
+		  <i class="fas fa-search"></i>
+		</button>          
+          <button class="btn" onclick="gen_Accion(pre)">Preliquidar</button> <!-- generarAccion('pre') -->
+        </div>
+      </div>
+
+      <!-- Liquidación -->
+      <div id="liquidacion-section" class="form-section hidden">
+        <div class="form-row">
+          <label>Fecha:</label>
+		<input type="date" id="fechaInicioLiq" />
+		<input type="date" id="fechaFinLiq" />
+        </div>
+
+        <div class="form-row">
+          <label>Número Orden:</label>
+          <input type="text" id="ordenInput" />
+        </div>
+
+        <div class="form-row">
+		<button class="btn" onclick="mostrarTabla('liq')" title="Visualizar">
+		  <i class="fas fa-search"></i>
+		</button>     
+
+		  <button class="btn" onclick="generarAccion('liq')" title="Liquidar Honorarios">
+		  <i class="fas fa-file-invoice-dollar"></i>
+		  </button>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+	<div id="resultados">
+	  <!-- Aquí se generará la tabla dinámicamente -->
+	</div>
+  </div>
+  
+  <!-- Modal para actualizar WS -->
+  <div id="wsModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>¿Desea actualizar la información del Web Service?</p>
+      <div class="modal-buttons">
+        <button class="cancel">Cancelar</button>
+        <button class="accept">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+
+// Inicializar EmailJS
+(function(){
+  emailjs.init("rtkxWaEjprYrEklX4");
+})();
+
+// Obtener radios y secciones
+const radioPre = document.getElementById("pre");
+const radioLiq = document.getElementById("liq");
+const seccionPre = document.getElementById("preliquidacion-section");
+const seccionLiq = document.getElementById("liquidacion-section");
+
+// Datos de preliquidaciones
+const preliquidaciones = [
+  { estado: "Preliquidado",    orden: "007",    profesional: "Ramirez Julian", contrato: "CON000022",    caso: "50008", cod_servicio: "890201", desc_servicio: "Consulta externa", fecha: "2025-04-06", hora: "09:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
+  { estado: "Preliquidado",    orden: "007",    profesional: "Ramirez Julian", contrato: "CON000023",    caso: "50009", cod_servicio: "890202", desc_servicio: "Consulta prioritaria", fecha: "2025-04-07", hora: "08:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "200000", total: 200000  },
+  { estado: "Preliquidado",    orden: "012",    profesional: "Palacio Yeny", contrato: "CON000016",    caso: "50012", cod_servicio: "890203", desc_servicio: "Consulta especializada", fecha: "2025-04-09", hora: "10:00 a.m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "220000", total: 220000  },
+  { estado: "Preliquidado",    orden: "012",    profesional: "Palacio Yeny", contrato: "CON000017",    caso: "50013", cod_servicio: "890204", desc_servicio: "Procedimiento diagnóstico", fecha: "2025-04-10", hora: "11:00 a.m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "350000", total: 350000  },
+  { estado: "Preliquidado",    orden: "013",    profesional: "López Mario", contrato: "CON000009",    caso: "50015", cod_servicio: "890206", desc_servicio: "Rayos X tórax", fecha: "2025-04-12", hora: "01:00 p.m.", aseguradora: "Coomeva EPS", especialidad: "Radiología", vr_unitario: "250000", total: 250000  },
+  { estado: "Preliquidado",    orden: "014",    profesional: "Reyes Camila", contrato: "CON000023",    caso: "50016", cod_servicio: "890207", desc_servicio: "Terapia física", fecha: "2025-04-13", hora: "08:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "180000", total: 180000  },
+  { estado: "Preliquidado",    orden: "014",    profesional: "Reyes Camila", contrato: "CON000024",    caso: "50017", cod_servicio: "890208", desc_servicio: "Terapia ocupacional", fecha: "2025-04-14", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "190000", total: 190000  },
+  { estado: "Preliquidado",    orden: "015",    profesional: "Ortega Juan", contrato: "CON000012",    caso: "50018", cod_servicio: "890209", desc_servicio: "Consulta externa", fecha: "2025-04-15", hora: "10:00 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
+  { estado: "Preliquidado",    orden: "016",    profesional: "Gómez Laura", contrato: "CON00002",    caso: "50020", cod_servicio: "890211", desc_servicio: "Consulta prioritaria", fecha: "2025-04-17", hora: "08:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina General", vr_unitario: "190000", total: 190000  },
+  { estado: "Preliquidado",    orden: "016",    profesional: "Gómez Laura", contrato: "CON00003",    caso: "50021", cod_servicio: "890212", desc_servicio: "Terapia lenguaje", fecha: "2025-04-18", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
+  { estado: "Preliquidado",    orden: "017",    profesional: "Palacio Yeny", contrato: "CON000018",    caso: "50022", cod_servicio: "890201", desc_servicio: "Consulta externa", fecha: "2025-04-19", hora: "10:00 a.m.", aseguradora: "Comfenalco", especialidad: "Medicina Interna", vr_unitario: "150000", total: 150000  },
+  { estado: "Preliquidado",    orden: "017",    profesional: "Palacio Yeny", contrato: "CON000019",    caso: "50023", cod_servicio: "890213", desc_servicio: "Terapia respiratoria", fecha: "2025-04-20", hora: "11:00 a.m.", aseguradora: "Coomeva EPS", especialidad: "Fisioterapia", vr_unitario: "200000", total: 200000  },
+  { estado: "Preliquidado",    orden: "018",    profesional: "López Mario", contrato: "CON000010",    caso: "50024", cod_servicio: "890214", desc_servicio: "Consulta especializada", fecha: "2025-04-21", hora: "12:00 m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "220000", total: 220000  },
+  { estado: "Preliquidado",    orden: "019",    profesional: "Reyes Camila", contrato: "CON000025",    caso: "50026", cod_servicio: "890216", desc_servicio: "Terapia física", fecha: "2025-04-23", hora: "08:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "200000", total: 200000  },
+  { estado: "Preliquidado",    orden: "019",    profesional: "Reyes Camila", contrato: "CON000026",    caso: "50027", cod_servicio: "890217", desc_servicio: "Terapia ocupacional", fecha: "2025-04-23", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "190000", total: 190000  },
+  { estado: "Preliquidado",    orden: "022",    profesional: "Ortega Juan", contrato: "CON000015",    caso: "50033", cod_servicio: "890223", desc_servicio: "Consulta externa", fecha: "2025-04-23", hora: "04:00 p.m.", aseguradora: "Nueva EPS", especialidad: "Medicina General", vr_unitario: "180000", total: 180000  },
+  { estado: "Preliquidado",    orden: "023",    profesional: "Gómez Laura", contrato: "CON00004",    caso: "50034", cod_servicio: "890224", desc_servicio: "Terapia lenguaje", fecha: "2025-04-23", hora: "08:30 a.m.", aseguradora: "SURA EPS", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
+  { estado: "Preliquidado",    orden: "023",    profesional: "Gómez Laura", contrato: "CON00005",    caso: "50035", cod_servicio: "890225", desc_servicio: "Terapia respiratoria", fecha: "2025-04-23", hora: "09:30 a.m.", aseguradora: "Coomeva EPS", especialidad: "Fisioterapia", vr_unitario: "200000", total: 200000  },
+  { estado: "Preliquidado",    orden: "024",    profesional: "López Mario", contrato: "CON000012",    caso: "50036", cod_servicio: "890226", desc_servicio: "Consulta prioritaria", fecha: "2025-04-23", hora: "10:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "190000", total: 190000  },
+  { estado: "Preliquidado",    orden: "025",    profesional: "Reyes Camila", contrato: "CON000027",    caso: "50038", cod_servicio: "890228", desc_servicio: "Terapia física", fecha: "2025-04-23", hora: "01:30 p.m.", aseguradora: "Coomeva EPS", especialidad: "Fisioterapia", vr_unitario: "190000", total: 190000  },
+      // Nuevos registros con fecha y hora actual
+  { estado: "Preliquidado",    orden: "027",    profesional: "López Mario", contrato: "CON000014",    caso: "50042", cod_servicio: "890215", desc_servicio: "Consulta externa", fecha: getCurrentDateTime().fecha, hora: getCurrentDateTime().hora, aseguradora: "Coomeva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
+  { estado: "Preliquidado",    orden: "027",    profesional: "López Mario", contrato: "CON000014",    caso: "50042", cod_servicio: "890215", desc_servicio: "Consulta externa", fecha: getCurrentDateTime().fecha, hora: getCurrentDateTime().hora, aseguradora: "Coomeva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
+  { estado: "Preliquidado",    orden: "027",    profesional: "Gómez Laura", contrato: "CON00006",    caso: "50043", cod_servicio: "890212", desc_servicio: "Terapia lenguaje", fecha: getCurrentDateTime().fecha, hora: getCurrentDateTime().hora, aseguradora: "SURA EPS", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
+  { estado: "Preliquidado",    orden: "027",    profesional: "Gómez Laura", contrato: "CON00006",    caso: "50043", cod_servicio: "890212", desc_servicio: "Terapia lenguaje", fecha: getCurrentDateTime().fecha, hora: getCurrentDateTime().hora, aseguradora: "SURA EPS", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
+  { estado: "Preliquidado",    orden: "027",    profesional: "Gómez Laura", contrato: "CON00007",    caso: "50044", cod_servicio: "890212", desc_servicio: "Terapia lenguaje", fecha: getCurrentDateTime().fecha, hora: getCurrentDateTime().hora, aseguradora: "Comfenalco", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
+  { estado: "Preliquidado",    orden: "027",    profesional: "Gómez Laura", contrato: "CON00007",    caso: "50044", cod_servicio: "890212", desc_servicio: "Terapia lenguaje", fecha: getCurrentDateTime().fecha, hora: getCurrentDateTime().hora, aseguradora: "Comfenalco", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
+  { estado: "Preliquidado",    orden: "027",    profesional: "Ramirez Julian", contrato: "CON000027",    caso: "50045", cod_servicio: "890219", desc_servicio: "Rayos X miembros", fecha: getCurrentDateTime().fecha, hora: getCurrentDateTime().hora, aseguradora: "Nueva EPS", especialidad: "Radiología", vr_unitario: "270000", total: 270000  }
+];
+
+// Función para obtener fecha/hora actual
+function getCurrentDateTime() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const fecha = `${year}-${month}-${day}`;
+  let hours = now.getHours() + 2;
+  const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const hora = `${hours}:${minutes} ${ampm}`;
+  return { fecha, hora };
+}
+
+// Función para enviar correo
+function enviarCorreo() {
+  const templateParams = {
+    to_email: 'medico.gral41@gmail.com, angelica.henao@correounivalle.edu.co, juliram81@gmail.com'
+  };
+
+  emailjs.send('service_90kj5s7', 'template_e6fp56h', templateParams)
+    .then(function(response) {
+      alert("Correos enviados con éxito ✔️");
+    }, function(error) {
+      alert("Error al enviar los correos ❌: " + JSON.stringify(error));
+    });
+}
+
+// Función para generar tabla
+function generarTabla(datos) {
+  const container = document.getElementById("resultados");
+
+  const formatNumber = num => new Intl.NumberFormat('es-CO').format(num);
+
+  const tablaHTML = `
+    <h3>${radioPre.checked ? 'Preliquidaciones' : 'Liquidaciones'}</h3>
+    <table>
+      <thead>
+        <tr>
+          <th class="col-select"><input type="checkbox" id="selectAllHead"></th>
+          <th>Estado</th>
+          <th>Orden</th>
+          <th>Profesional</th>
+          <th>Contrato</th>
+          <th>Caso</th>
+          <th>Cód. Servicio</th>
+          <th>Desc. Servicio</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Aseguradora</th>
+          <th>Especialidad</th>
+          <th>Vr. Unitario</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body">
+        ${datos.map((item, index) => `
+          <tr data-index="${index}">
+            <td class="col-select"><input type="checkbox" class="row-checkbox"></td>
+            <td class="estado-cell">${radioPre.checked ? '' : item.estado}</td>
+            <td class="orden-cell">${radioPre.checked ? '' : item.orden}</td>
+            <td>${item.profesional}</td>
+            <td>${item.contrato}</td>
+            <td>${item.caso}</td>
+            <td>${item.cod_servicio}</td>
+            <td>${item.desc_servicio}</td>
+            <td>${item.fecha}</td>
+            <td>${item.hora}</td>
+            <td>${item.aseguradora}</td>
+            <td>${item.especialidad}</td>
+            <td>$${formatNumber(item.vr_unitario)}</td>
+            <td>$${formatNumber(item.total)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="12"><strong>Totales</strong></td>
+          <td>$${formatNumber(datos.reduce((sum, item) => sum + parseInt(item.vr_unitario), 0))}</td>
+          <td>$${formatNumber(datos.reduce((sum, item) => sum + parseInt(item.total), 0))}</td>
+        </tr>
+      </tfoot>
+    </table>
+  `;
+
+  container.innerHTML = tablaHTML;
+// Guardar en LocalStorage
+localStorage.setItem('datosTabla', JSON.stringify(datos));
+
+  // Evento seleccionar todo
+  document.getElementById("selectAllHead").addEventListener("change", function() {
+    const isChecked = this.checked;
+    document.querySelectorAll(".row-checkbox").forEach(cb => cb.checked = isChecked);
+  });
+}
+
+// Función para filtrar datos
+function filtrarDatos() {
+  const fechaInicio = document.getElementById("fechaInicio").value;
+  const fechaFin = document.getElementById("fechaFin").value;
+  const aseguradora = document.getElementById("aseguradoraSelect").value;
+  const tipoContrato = document.getElementById("tipoContrato").value;
+  const especialidad = document.getElementById("especialidad").value;
+  const profesional = document.getElementById("profesionalSelect").value;
+
+  let datosFiltradosPorEstado = preliquidaciones.filter(item => 
+    radioPre.checked 
+      ? (item.estado === "Preliquidado" || item.estado === "En seguimiento" || item.estado === "Pendiente")
+      : item.estado === "Liquidado"
+  );
+
+  let datosFiltrados = datosFiltradosPorEstado.filter(item => {
+    if (fechaInicio && item.fecha < fechaInicio) return false;
+    if (fechaFin && item.fecha > fechaFin) return false;
+    if (aseguradora && item.aseguradora !== aseguradora) return false;
+    if (profesional && item.profesional !== profesional) return false;
+    const especialidadVisible = document.getElementById("especialidadGrupo").style.display !== "none";
+    if (especialidadVisible && especialidad && item.especialidad !== especialidad) return false;
+    return true;
+  });
+
+  generarTabla(datosFiltrados);
+}
+
+    // Función para mostrar/ocultar especialidad
+    function mostrarEspecialidad(valor) {
+      const divEsp = document.getElementById("especialidadGrupo");
+      divEsp.style.display = valor === "grupo" ? "flex" : "none";
+    }
+
+// Función para mostrar tabla
+function mostrarTabla(tipo) {
+  let datos = preliquidaciones.filter(item => 
+    tipo === 'pre'
+      ? (item.estado === "Preliquidado" || item.estado === "En seguimiento" || item.estado === "Pendiente")
+      : item.estado === "Liquidado"
+  );
+
+  generarTabla(datos);
+}
+
+// Función para llenar Estado y Orden de seleccionados
+function gen_Accion(pre) {
+  const filas = document.querySelectorAll("#tabla-body tr");
+  filas.forEach((fila, index) => {
+    const checkbox = fila.querySelector(".row-checkbox");
+    if (checkbox && checkbox.checked) {
+      const estadoCell = fila.querySelector(".estado-cell");
+      const ordenCell = fila.querySelector(".orden-cell");
+      estadoCell.innerText = preliquidaciones[index].estado;
+      ordenCell.innerText = preliquidaciones[index].orden;
+    }
+  });
+  enviarCorreo();
+}
+
+// Evento al cargar página
+document.addEventListener('DOMContentLoaded', function() {
+  const fechaInicioInput = document.getElementById("fechaInicio");
+  const fechaFinInput = document.getElementById("fechaFin");
+  const periodoInput = document.getElementById("periodo");
+
+  const fechaInicioAbril = "2025-04-01";
+  const fechaFinAbril = "2025-04-30";
+
+  // Establecer valores por defecto
+  if (fechaInicioInput) fechaInicioInput.value = fechaInicioAbril;
+  if (fechaFinInput) fechaFinInput.value = fechaFinAbril;
+  if (periodoInput) periodoInput.value = 4;
+
+  function validarFechas() {
+    if (fechaInicioInput.value !== fechaInicioAbril || fechaFinInput.value !== fechaFinAbril) {
+      alert("Periodo cerrado ❌. Solo se permiten fechas dentro de abril.");
+      fechaInicioInput.value = fechaInicioAbril;
+      fechaFinInput.value = fechaFinAbril;
+      periodoInput.value = 4;
+    }
+  }
+
+  fechaInicioInput.addEventListener("change", validarFechas);
+  fechaFinInput.addEventListener("change", validarFechas);
+  periodoInput.addEventListener("change", () => {
+    if (periodoInput.value != 4) {
+      alert("Periodo cerrado ❌. Solo se permite el periodo 4.");
+      periodoInput.value = 4;
+    }
+  });
+
+  if (radioPre.checked) {
+    seccionPre.classList.remove("hidden");
+    seccionLiq.classList.add("hidden");
+    mostrarTabla('pre');
+  } else if (radioLiq.checked) {
+    seccionLiq.classList.remove("hidden");
+    seccionPre.classList.add("hidden");
+    mostrarTabla('liq');
+  }
+
+  radioPre.addEventListener("change", () => {
+    seccionPre.classList.remove("hidden");
+    seccionLiq.classList.add("hidden");
+    mostrarTabla('pre');
+  });
+
+  radioLiq.addEventListener("change", () => {
+    seccionLiq.classList.remove("hidden");
+    seccionPre.classList.add("hidden");
+    mostrarTabla('liq');
+  });
+}
+);
+
+</script>
+
+</body>
+</html>

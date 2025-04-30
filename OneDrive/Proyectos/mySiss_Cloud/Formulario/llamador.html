@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Llamador de Formularios</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: purple;
+    }
+    .contenedor-botones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .boton-formulario {
+      padding: 12px 20px;
+      background-color: purple;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .boton-formulario:hover {
+      background-color: #6a0dad;
+    }
+    #formContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #formIframe {
+      width: 413px;
+      height: 455px;
+      border: none;
+      background: transparent;
+      display: block;
+    }
+    #mensajeExito {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px 40px;
+      border-radius: 5px;
+      z-index: 1001;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      font-size: 18px;
+      animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Sistema de Justificación de Casos</h1>
+<p>Seleccione el tipo de formulario que necesita:</p>
+
+<div class="contenedor-botones">
+  <button class="boton-formulario" onclick="abrirFormulario('popupForm1')">Caso Clínico</button>
+  <button class="boton-formulario" onclick="abrirFormulario('popupForm2')">Procedimiento</button>
+  <button class="boton-formulario" onclick="abrirFormulario('popupForm3')">Medicamentos</button>
+  <button class="boton-formulario" onclick="abrirFormulario('popupForm4')">Hospitalización</button>
+  <button class="boton-formulario" onclick="abrirFormulario('popupForm5')">Exámenes</button>
+</div>
+
+<!-- Contenedor para el iframe -->
+<div id="formContainer">
+  <iframe id="formIframe" 
+          src="" 
+          frameborder="0"
+          scrolling="no"
+          allowtransparency="true"></iframe>
+</div>
+
+<!-- Mensaje de éxito -->
+<div id="mensajeExito">
+  ¡Justificación guardada con éxito!
+</div>
+
+<script>
+  // Función para abrir formularios
+  function abrirFormulario(formId) {
+    const formContainer = document.getElementById('formContainer');
+    const formIframe = document.getElementById('formIframe');
+    
+    // Cargar el formulario en el iframe
+    formIframe.src = 'formularios.html#' + formId;
+    formContainer.style.display = 'flex';
+    
+    // Asegurar que el iframe no tenga fondos adicionales
+    formIframe.style.backgroundColor = 'transparent';
+    
+    // Bloquear el scroll del body
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Función para cerrar formularios
+  function cerrarFormulario() {
+    document.getElementById('formContainer').style.display = 'none';
+    document.getElementById('formIframe').src = '';
+    
+    // Restaurar el scroll del body
+    document.body.style.overflow = 'auto';
+  }
+
+  // Función para mostrar mensaje de éxito
+  function mostrarExito() {
+    const mensaje = document.getElementById('mensajeExito');
+    mensaje.style.display = 'block';
+    
+    // Ocultar después de 3 segundos
+    setTimeout(() => {
+      mensaje.style.display = 'none';
+    }, 3000);
+  }
+
+  // Escuchar mensajes del iframe
+  window.addEventListener('message', function(e) {
+    if (e.data === 'cerrar') {
+      cerrarFormulario();
+    } else if (e.data === 'guardado') {
+      cerrarFormulario();
+      mostrarExito();
+    }
+  });
+</script>
+</body>
+</html>

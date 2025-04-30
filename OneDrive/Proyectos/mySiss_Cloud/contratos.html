@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuracion_HO - mySiss</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --mysiss-purple: #800080;
+            --mysiss-light-purple: #EBE3F2;
+            --mysiss-hover-purple: #DFD1EE;
+        }
+
+        .custom-radio {
+            accent-color: var(--mysiss-purple);
+        }
+
+        .focus-outline:focus-visible {
+            outline: 2px solid var(--mysiss-purple);
+            outline-offset: 2px;
+        }
+
+        .hidden { display: none; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .medico-inactivo {
+            opacity: 0.6;
+            background-color: #f3f4f6;
+        }
+		<!-- Modificado agregar -->
+		.sidebar {
+		  display: flex;
+		  flex-direction: column;
+		  justify-content: space-between;
+		  height: 100vh;
+		  padding: 20px;
+		  position: relative;
+		}
+    </style>
+</head>
+<body class="flex h-screen w-full overflow-hidden">
+    <!-- Sidebar --> <!-- Modificado todo esto-->
+    <div class="w-48 h-full bg-[var(--mysiss-light-purple)] flex flex-col">
+        <div class="p-6">
+            <h1 class="text-[var(--mysiss-purple)] text-4xl font-bold">mySiss</h1>
+        </div>
+        <nav class="mt-4 flex flex-col" aria-label="Menú principal">
+            <a href="configuracion.html" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors focus-outline">
+                Configuración
+            </a>
+            <a href="cargue" id="templates-link" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors mt-2 focus-outline">
+                Data maestra
+            </a>
+            <a href="contratos.html"  id="config-link"  style="text-decoration: underline;" class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors mt-2 focus-outline">
+                Contratos
+            </a>
+			<a href="login.html" 
+			   class="nav-link py-2 px-6 text-[var(--mysiss-purple)] hover:bg-[var(--mysiss-hover-purple)] transition-colors focus-outline"
+					style="position: absolute; bottom: 20px;">
+			   Cerrar sesión
+			</a>
+        </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 bg-white p-8 overflow-auto">
+        <!-- Sección Configuración -->
+		<div id="config-section" class="ml-[50px] mt-2 max-w-3xl hidden">         <!-- Modificado -->
+
+            <h2 class="text-2xl font-bold text-[var(--mysiss-purple)] mb-6">Contratos</h2>
+            <fieldset class="space-y-4 mb-8" aria-labelledby="config-seleccion">
+				<legend id="config-seleccion" class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+				  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+				  </svg>
+				  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z" />
+				  </svg>
+				</legend>
+                <!-- Institución -->
+                <div>
+                    <div class="flex items-center">
+                        <input type="radio" id="institucion" name="configOption" class="custom-radio w-4 h-4 focus-outline">
+                        <label for="institucion" class="ml-2 text-lg text-gray-700 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                            </svg>
+                            Institución
+                        </label>
+                    </div>
+                    <div id="sedes-row" class="ml-8 mt-1 flex items-center text-gray-600 hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                        Sedes
+                    </div>
+                </div>
+                <!-- Esquema de estatus -->
+                <div class="flex items-center">
+                    <input type="radio" id="estatus" name="configOption" class="custom-radio w-4 h-4 focus-outline">
+                    <label for="estatus" class="ml-2 text-lg text-gray-700 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                        Esquema de estatus
+                    </label>
+                </div>
+                <!-- Periodos -->
+                <div class="flex items-center">
+                    <input type="radio" id="periodos" name="configOption" class="custom-radio w-4 h-4 focus-outline">
+                    <label for="periodos" class="ml-2 text-lg text-gray-700 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                        Periodos
+                    </label>
+                </div>
+                <!-- Descuentos -->
+                <div class="flex items-center">
+                    <input type="radio" id="descuentos" name="configOption" class="custom-radio w-4 h-4 focus-outline">
+                    <label for="descuentos" class="ml-2 text-lg text-gray-700 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                        Descuentos
+                    </label>
+                </div>
+                <!-- Horarios -->
+                <div class="flex items-center">
+                    <input type="radio" id="horarios" name="configOption" class="custom-radio w-4 h-4 focus-outline">
+                    <label for="horarios" class="ml-2 text-lg text-gray-700 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                        Horarios
+                    </label>
+                </div>
+                <!-- Liquidación -->
+                <div class="flex items-center">
+                    <input type="radio" id="liquidacion" name="configOption" class="custom-radio w-4 h-4 focus-outline">
+                    <label for="liquidacion" class="ml-2 text-lg text-gray-700 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                        Liquidación
+                    </label>
+                </div>
+                <!-- Tareas -->
+                <div class="flex items-center">
+                    <input type="radio" id="tareas" name="configOption" class="custom-radio w-4 h-4 focus-outline">
+                    <label for="tareas" class="ml-2 text-lg text-gray-700 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--mysiss-purple)] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                        </svg>
+                        Tareas
+                    </label>
+                </div>
+            </fieldset>
+        </div>
+        
+        <!-- Sección Cargue plantillas -->
+        <div id="templates-section" class="max-w-2xl mx-auto hidden">
+            <h2 class="text-2xl font-bold text-[var(--mysiss-purple)] mb-6">Cargue plantillas</h2>
+            <!-- Contenido... -->
+        </div>
+    </div>
+
+    <script>
+        // Navegación entre secciones
+        const configLink = document.getElementById('config-link');
+        const templatesLink = document.getElementById('templates-link');
+        const configSection = document.getElementById('config-section');
+        const templatesSection = document.getElementById('templates-section');
+
+        configLink.addEventListener('click', e => {
+            e.preventDefault();
+            configSection.classList.remove('hidden');
+            templatesSection.classList.add('hidden');
+            configLink.classList.add('bg-[var(--mysiss-hover-purple)]');
+            templatesLink.classList.remove('bg-[var(--mysiss-hover-purple)]');
+        });
+        templatesLink.addEventListener('click', e => {
+            e.preventDefault();
+            templatesSection.classList.remove('hidden');
+            configSection.classList.add('hidden');
+            templatesLink.classList.add('bg-[var(--mysiss-hover-purple)]');
+            configLink.classList.remove('bg-[var(--mysiss-hover-purple)]');
+        });
+
+        // Mostrar/ocultar Sedes al cambiar selección
+        const radios = document.querySelectorAll('input[name="configOption"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.id === 'institucion' && radio.checked) {
+                    document.getElementById('sedes-row').classList.remove('hidden');
+                } else {
+                    document.getElementById('sedes-row').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

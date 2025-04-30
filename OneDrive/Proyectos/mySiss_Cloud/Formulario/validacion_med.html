@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <title>Cloud Medical Fees mySiss</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: white;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 180px;
+      background-color: #eee6f8;
+      padding: 20px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .sidebar h1 {
+      color: purple;
+      font-weight: bold;
+      font-size: 50px;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      display: block;
+      margin: 20px 0;
+      color: purple;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      background-color: white;
+      padding: 20px 40px;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      min-width: 140px;
+    }
+
+    input, select {
+      padding: 6px;
+      width: 200px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      margin-top: 10px;
+      margin-right: 10px;
+      background-color: purple;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .table-section {
+      background-color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    .col-select {
+      width: 20px;
+      position: relative;
+    }
+
+    .col-select input[type="checkbox"] {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .popup {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+      width: 400px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 60px;
+      resize: none;
+    }
+
+    .popup-icon {
+      cursor: pointer;
+      font-size: 18px;
+      color: #555;
+    }
+
+    .row-rechazada {
+      background-color: #ffeeee;
+    }
+	
+	.subrayado {
+    text-decoration: underline;
+	}
+
+	/* Contenedor de la popup */
+	.popup-content {
+	  background-color: white;
+	  padding: 20px;
+	  border-radius: 8px;
+	  position: relative; /* Para que el ícono se posicione respecto a este contenedor */
+	  width: 80%; /* Puedes ajustarlo según el tamaño deseado */
+	  max-width: 500px;
+	}
+
+	/* Estilo para el icono de cerrar (X) */
+	.popup-close {
+	  position: absolute;
+	  top: 10px;
+	  right: 10px;
+	  font-size: 30px;
+	  cursor: pointer;
+	  background-color: #ccc; /* Fondo gris */
+	  color: white;
+	  border-radius: 0%;
+	  width: 30px;
+	  height: 30px;
+	  text-align: center;
+	  line-height: 30px;
+	  font-weight: bold;
+	}
+
+	.popup-close:hover {
+	  background-color: #999; /* Cambiar de color al pasar el mouse */
+	}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h1>mySiss</h1>
+      <a href="validacion_med.html" style="text-decoration: underline;">Validaciones</a>
+      <a href="reportes_med.html">Reportes</a>
+	  <a href="login.html">Cerrar sesion</a>
+    </div>
+
+    <div class="main">
+      <div class="form-row">
+        <label>Fecha:</label>
+		<input type="date" id="fechaInicio" />
+		<input type="date" id="fechaFin" />
+      </div>
+
+      <div class="form-row">
+        <label>Número Orden:</label>
+        <select id="numeroOrden">
+          <option selected></option>
+          <option>003</option>
+          <option>005</option>
+          <option>007</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <button class="btn" onclick="mostrarTabla()">Buscar</button>
+      </div>
+
+      <div id="tablaPreliq" class="table-section hidden">
+        <h3 id="tituloPreliq">Detalle de preliquidación</h3>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-select"></th>
+              <th class="col-status">Status</th>
+              <th class="col-motivo">Respuesta</th>
+              <th>Orden</th>
+              <th>Caso</th>
+              <th>Cód. Servicio</th>
+              <th>Desc. Servicio</th>
+              <th>Fecha</th>
+              <th>Aseguradora</th>
+              <th>Especialidad</th>
+              <th>Descuentos</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body">
+            <tr>
+              <td class="col-select"><input type="checkbox" checked onchange="confirmarDesmarque(this)" /></td>
+              <td class="col-status">Pendiente</td>
+              <td class="col-motivo"></td>
+              <td>007</td>
+              <td>50006</td>
+              <td>890201</td>
+              <td>Consulta externa</td>
+              <td>2025-04-05</td>
+              <td>Nueva EPS</td>
+              <td>Medicina Interna</td>
+              <td>$0</td>
+              <td>$208.571</td>
+            </tr>
+            <tr>
+              <td class="col-select"><input type="checkbox" checked onchange="confirmarDesmarque(this)" /></td>
+              <td class="col-status">Pendiente</td>
+              <td class="col-motivo"></td>
+              <td>007</td>
+              <td>50007</td>
+              <td>890201</td>
+              <td>Consulta externa</td>
+              <td>2025-04-08</td>
+              <td>Nueva EPS</td>
+              <td>Medicina Interna</td>
+              <td>$0</td>
+              <td>$208.571</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="10"><strong>Totales</strong></td>
+              <td>$0</td>
+              <td>$417.142</td>
+            </tr>
+          </tfoot>
+        </table>
+		<div style="text-align: center; margin-top: 20px;">
+		<button id="btnGuardar" class="btn btn-primary" >Guardar</button>		
+		</div>
+      </div>
+    </div>
+ </div>
+
+  <!-- Popup Justificación -->
+  <div id="popupForm" class="popup hidden">
+      <span id="closePopup" class="popup-close">×</span>
+    <h3>Formulario de Justificación</h3>
+    <div id="formularioCampos"></div>
+    <button class="btn" onclick="guardarFormulario()">Guardar</button>
+  </div>
+
+  <!-- Popup Respuesta -->
+  <div id="popupRespuesta" class="popup hidden">
+    <span id="closePopup" class="popup-close">×</span>
+    <h3>Formulario de Respuesta dfsdfsd</h3>
+    <div id="respuestaCampos"></div>
+  </div>
+	<!-- Popup de Confirmación -->
+	<div id="popupConfirmacion" class="popup hidden">
+	    <span id="closePopup" class="popup-close">×</span>
+	  <p>¿Estás seguro de guardar los datos?</p>
+	  <button id="btnEnviarConfirmacion" class="btn btn-primary">Enviar</button>
+	</div>
+
+	<div id="popupExito" class="popup hidden">
+	  <h3>✅ Datos grabados con éxito</h3>
+	  <button onclick="cerrarPopupExito()" class="btn btn-primary">Ok</button>
+	</div>
+  <script>
+let checkboxTemporal = null;
+let filaTemporal = null;
+let motivoSeleccionado = "";
+let detalleTexto = "";
+
+document.addEventListener("DOMContentLoaded", function () {
+  const botonGuardar = document.getElementById("btnGuardar");
+  const botonEnviar = document.getElementById("btnEnviarConfirmacion");
+  const closePopupBtn = document.getElementById("closePopup");
+  const closePopupConfirmacion = document.getElementById("closePopup");
+
+  // Abrir popup de confirmación
+  if (botonGuardar) {
+    botonGuardar.addEventListener("click", function () {
+      document.getElementById("popupConfirmacion").classList.remove("hidden");
+    });
+  }
+
+  // Enviar y luego mostrar éxito SOLO cuando guardarDatos termine
+  if (botonEnviar) {
+    botonEnviar.addEventListener("click", async function () {
+      document.getElementById("popupConfirmacion").classList.add("hidden");
+
+      // Espera que termine la función (aunque tenga setTimeout, fetch, etc)
+      await guardarDatos();
+
+      // Luego de guardar, muestra popup de éxito
+      document.getElementById("popupExito").classList.remove("hidden");
+    });
+  }
+  
+  // Cerrar popup de éxito
+  window.cerrarPopupExito = function () {
+    document.getElementById("popupExito").classList.add("hidden");
+  };
+});
+
+// Ejemplo de función asíncrona (simula retardo con setTimeout)
+async function guardarDatos() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("✅ Datos guardados.");
+      resolve();
+    }, 2000); // simula 2 segundos
+  });
+}
+
+function mostrarTabla() {
+    const fechaInicio = document.getElementById("fechaInicio").value;
+    const fechaFin = document.getElementById("fechaFin").value;
+    const numeroOrden = document.getElementById("numeroOrden").value;
+
+    if (!fechaInicio || !fechaFin || !numeroOrden) {
+      alert("Por favor selecciona ambas fechas y el número de orden.");
+      return;
+    }
+  document.getElementById("tablaPreliq").classList.remove("hidden");
+}
+
+function confirmarDesmarque(checkbox) {
+  const fila = checkbox.closest("tr");
+  
+  if (!checkbox.checked) {
+    checkboxTemporal = checkbox;
+    filaTemporal = fila;
+
+    const celdas = filaTemporal.querySelectorAll("td");
+
+    const contenido = `
+      <p><strong>Fecha:</strong> ${celdas[7].textContent}</p>
+      <p><strong>Orden:</strong> ${celdas[3].textContent}</p>
+      <p><strong>Caso:</strong> ${celdas[4].textContent}</p>
+      <p><strong>Prestación:</strong> ${celdas[5].textContent}</p>
+      <p><strong>Descripción:</strong> ${celdas[6].textContent}</p>
+      <p><strong>Motivo:</strong>
+        <select id="motivo">
+          <option value="Diferencia en Tarifas">Diferencia en Tarifas</option>
+          <option value="Duplicidad de Registros">Duplicidad de Registros</option>
+          <option value="Deducciones no Justificadas">Deducciones no Justificadas</option>
+          <option value="Inconsistencias en Códigos">Inconsistencias en Códigos</option>
+        </select>
+      </p>
+      <p><strong>Detalle:</strong><br>
+        <textarea id="detalle" placeholder="Escriba el detalle aquí..."></textarea>
+      </p>
+    `;
+    document.getElementById("formularioCampos").innerHTML = contenido;
+    document.getElementById("popupForm").classList.remove("hidden");
+	
+  } else {
+    // ✅ Si vuelve a marcarse el checkbox, restablecer estado
+    fila.classList.remove("row-rechazada");
+    checkbox.parentElement.style.backgroundColor = "";
+  }
+}
+
+function guardarDatos() {
+  const filas = document.querySelectorAll("#tablaPreliq tbody tr");
+
+  filas.forEach(fila => {
+    const checkbox = fila.querySelector("input[type='checkbox']");
+    const statusCelda = fila.querySelector(".col-status");
+    const motivoCelda = fila.querySelector(".col-motivo");
+
+    if (checkbox.checked) {
+      // ✅ Si está seleccionado, marcar como Confirmado
+      statusCelda.textContent = "Confirmado";
+    } else {
+      // ⏳ Si NO está seleccionado, marcar como En seguimiento
+      statusCelda.textContent = "En seguimiento";
+
+      setTimeout(() => {
+        // Crear ícono de respuesta
+        const icono = document.createElement("span");
+        icono.className = "popup-icon";
+        icono.innerHTML = "📩";
+        icono.setAttribute("data-respuesta", "Se confirma y se arregla según las observaciones");
+        icono.onclick = function () {
+          verFormularioRespuesta(this);
+        };
+
+        motivoCelda.innerHTML = "";
+        motivoCelda.appendChild(icono);
+      }, 60 * 1000); // ⏱ 1 minuto
+    }
+  });
+}
+
+function guardarFormulario() {
+  const motivo = document.getElementById("motivo").value;
+  const detalle = document.getElementById("detalle").value;
+
+  if (checkboxTemporal && filaTemporal) {
+    // ✅ Solo coloreamos la fila seleccionada de rojo, pero no se cambian más cosas
+    filaTemporal.classList.add("row-rechazada");
+    document.getElementById("popupForm").classList.add("hidden");
+
+    // No cambiamos el estado ni agregamos el ícono de email
+    // Simplemente se marca la fila en rojo y se cierra el formulario
+  }
+}
+
+// Función para cerrar la popup con la X
+document.getElementById("closePopup").addEventListener("click", function () {
+  // Oculta la popup
+  document.getElementById("popupForm").classList.add("hidden");
+  // Si se desmarcó el checkbox y se cerró la popup, lo volvemos a marcar
+  if (checkboxTemporal) {
+    checkboxTemporal.checked = true;
+  }
+
+  // Limpiamos variables temporales
+  checkboxTemporal = null;
+  filaTemporal = null;
+});
+function verFormularioRespuesta(icono) {
+  const respuestaTexto = icono.getAttribute("data-respuesta") || "Se confirma y se arregla según las observaciones";
+  const respuestaCampos = document.getElementById("respuestaCampos");
+
+  respuestaCampos.innerHTML = `
+    <p><strong>Detalle:</strong> ${respuestaTexto}</p>
+  `;
+  document.getElementById("popupRespuesta").classList.remove("hidden");
+}
+
+const closePopupBtn = document.getElementById("closePopup");
+if (closePopupBtn) {
+  closePopupBtn.addEventListener("click", function () {
+    document.getElementById("popupConfirmacion").classList.add("hidden");
+  });
+}
+// Cerrar cualquier popup al hacer clic en la X
+document.querySelectorAll('.popup-close').forEach(function(closeBtn) {
+  closeBtn.addEventListener('click', function () {
+    closeBtn.parentElement.classList.add('hidden');
+  });
+});
+</script>
+</body>
+</html>
