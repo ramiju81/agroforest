@@ -1,0 +1,116 @@
+/* estilos.css - Versión mejorada para responsive */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Cambiado de center a flex-start */
+  min-height: 100vh;
+  padding: 20px; /* Añadido espacio alrededor en móviles */
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background-color: #fff;
+  padding: 1.5rem; /* Reducido en móviles */
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  margin: 20px 0; /* Espacio arriba y abajo */
+}
+
+.card img.logo {
+  width: 80px; /* Reducido para móviles */
+  margin-bottom: 1rem;
+  height: auto;
+}
+
+.card h2 {
+  font-size: clamp(18px, 4vw, 22px); /* Tamaño responsive */
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.card p {
+  font-size: clamp(13px, 3vw, 14px); /* Tamaño responsive */
+  color: #777;
+  margin-bottom: 1.5rem;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  padding: 12px; /* Aumentado para móviles */
+  margin-top: 10px;
+  font-size: 16px; /* Aumentado para móviles */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  width: 100%;
+  padding: 12px; /* Aumentado para móviles */
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px; /* Aumentado para móviles */
+}
+
+.google-btn {
+  background: transparent;
+  padding: 0;
+}
+
+.google-btn img {
+  width: 40%;
+  max-width: 280px;
+  height: auto;
+  border-radius: 8px;
+}
+
+a {
+  font-size: clamp(13px, 3vw, 14px); /* Tamaño responsive */
+  color: #3366ff;
+  display: inline-block;
+  margin-top: 15px;
+  text-decoration: none;
+}
+
+/* Media queries para ajustes específicos */
+@media (max-width: 480px) {
+  .card {
+    padding: 1.2rem;
+    border-radius: 12px;
+  }
+  
+  body {
+    padding: 10px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 350px) {
+  .card img.logo {
+    width: 70px;
+  }
+  
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    padding: 10px;
+  }
+}

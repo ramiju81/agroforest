@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messungen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <div class="card">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Messungen Logo" class="logo">
+        <h2>Registro Cineantropométrico</h2>
+        
+        {% if error %}
+        <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="email" name="email" placeholder="hola@example.com" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Ingresar</button>
+        </form>
+        
+        <a href="{{ url_for('reset') }}">Recordar contraseña</a>
+        <br><br>
+        <a href="#" class="google-image-btn">
+            <img src="{{ url_for('static', filename='img/google-icon.png') }}" alt="Ingresar con Google">
+        </a>
+        <br>
+        <a href="{{ url_for('registro') }}">Registrarse</a>
+    </div>
+</body>
+</html>

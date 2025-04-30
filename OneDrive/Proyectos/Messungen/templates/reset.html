@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Messungen Logo" class="logo">
+    <h2>Registro Cineantropométrico</h2>
+    
+    {% if message %}
+    <p style="color: green;">{{ message }}</p>
+    {% endif %}
+    
+    <form method="POST" action="{{ url_for('reset') }}">
+        <input type="email" name="email" placeholder="Email" required>
+        <button type="submit">Recuperar Password</button>
+    </form>
+    
+    <a href="{{ url_for('login') }}">Iniciar sesión</a>
+</div>
+{% endblock %}
