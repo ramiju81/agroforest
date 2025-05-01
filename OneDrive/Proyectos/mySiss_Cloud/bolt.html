@@ -27,7 +27,6 @@
             z-index: 1000;
         }
 
-
         .search-modal {
             position: fixed;
             top: 50%;
@@ -103,8 +102,8 @@
             background-color: var(--mysiss-light-purple);
         }
         
-          /* Estilos para el modal de ayuda */
-          .help-modal-container {
+        /* Estilos para el modal de ayuda */
+        .help-modal-container {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -118,50 +117,50 @@
             padding: 20px;
             max-height: 80vh;
             overflow-y: auto;
-          }
-          
-          .help-modal-header {
+        }
+        
+        .help-modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
-          }
-          
-          .help-modal-title {
+        }
+        
+        .help-modal-title {
             font-size: 18px;
             font-weight: 600;
             color: var(--mysiss-purple);
-          }
-          
-          .help-modal-close {
+        }
+        
+        .help-modal-close {
             cursor: pointer;
             background: none;
             border: none;
             font-size: 20px;
             color: #666;
-          }
-          
-          .help-item {
+        }
+        
+        .help-item {
             padding: 8px 12px;
             margin: 4px 0;
             border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
-          }
-          
-          .help-item:hover {
+        }
+        
+        .help-item:hover {
             background-color: var(--mysiss-light-purple);
-          }
-          
-          .help-item input[type="checkbox"] {
+        }
+        
+        .help-item input[type="checkbox"] {
             margin-right: 10px;
             accent-color: var(--mysiss-purple);
-          }
-          
-          .help-modal-apply {
+        }
+        
+        .help-modal-apply {
             margin-top: 15px;
             width: 100%;
             padding: 8px 16px;
@@ -170,11 +169,87 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-          }
-          
-          .help-modal-apply:hover {
+        }
+        
+        .help-modal-apply:hover {
             background-color: #6b006b;
-          }
+        }
+
+        /* Estilos para el nuevo modal de contrato */
+        .contract-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .contract-section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--mysiss-purple);
+        }
+
+        .conditions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .conditions-table th, .conditions-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .conditions-table th {
+            background-color: var(--mysiss-light-purple);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--mysiss-light-purple);
+            color: var(--mysiss-purple);
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+
+        .file-input-button:hover {
+            background-color: var(--mysiss-hover-purple);
+        }
+
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .execute-button {
+            background-color: var(--mysiss-purple);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .execute-button:hover {
+            background-color: #6b006b;
+        }
     </style>
 </head>
 <body class="flex h-screen w-full overflow-hidden">
@@ -365,6 +440,248 @@
         </div>
         <button id="apply-help-selection" class="help-modal-apply">Aplicar selección</button>
       </div>
+    </div>
+
+    <!-- Modal de nuevo contrato -->
+    <div id="new-contract-modal-overlay" class="search-modal-overlay hidden"></div>
+    <div id="new-contract-modal" class="search-modal hidden" style="max-width: 900px;">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Nuevo Contrato</h3>
+            <button id="close-new-contract-modal" class="text-gray-500 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
+        <div class="search-filters">
+            <!-- Sección de Contrato -->
+            <div class="contract-section">
+                <div class="contract-section-title">Contrato</div>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Código Contrato</label>
+                        <input type="text" id="contract-code-new" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100" readonly value="CON009">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de contrato</label>
+                        <select id="contract-type-new" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="propio">A nombre propio</option>
+                            <option value="sociedad">Sociedad</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Campos para nombre propio -->
+                <div id="professional-fields">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Código Médico</label>
+                            <input type="text" id="medico-codigo" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sede</label>
+                            <select id="sede" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">Seleccione una sede</option>
+                                <option value="01">01 Sede Norte</option>
+                                <option value="02">02 Sede Sur</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Liquidación</label>
+                            <select id="liquidacion" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="facturado">Servicio Facturado</option>
+                                <option value="realizado">Servicio Realizado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Campos para sociedad (ocultos inicialmente) -->
+                <div id="society-fields" class="hidden">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ID Sociedad</label>
+                            <input type="text" id="sociedad-id" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sede</label>
+                            <select id="sede-sociedad" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="">Seleccione una sede</option>
+                                <option value="01">01 Sede Norte</option>
+                                <option value="02">02 Sede Sur</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Sociedad</label>
+                            <input type="text" id="sociedad-nombre" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">NIT Sociedad</label>
+                            <input type="text" id="sociedad-nit" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Liquidación</label>
+                            <select id="liquidacion-sociedad" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="facturado">Servicio Facturado</option>
+                                <option value="realizado">Servicio Realizado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de Vigencia -->
+            <div class="contract-section">
+                <div class="contract-section-title">Vigencia</div>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombres Médico</label>
+                        <input type="text" id="medico-nombres" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+                        <input type="text" id="medico-apellidos" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de Cargue de condiciones -->
+            <div class="contract-section">
+                <div class="contract-section-title">Cargue de condiciones</div>
+                <div class="filter-row">
+                    <div class="filter-group" style="flex: 2;">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Seleccionar archivo</label>
+                        <div class="file-input-wrapper">
+                            <div class="file-input-button">
+                                <span id="file-name">Ningún archivo seleccionado</span>
+                                <span>📁</span>
+                            </div>
+                            <input type="file" id="file-upload" class="file-input" accept=".xlsx,.xls,.csv">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group" style="align-self: flex-end;">
+                        <button id="execute-upload" class="execute-button">Ejecutar</button>
+                    </div>
+                </div>
+                
+                <!-- Tabla de condiciones (oculta inicialmente) -->
+                <div id="conditions-table-container" class="hidden">
+                    <table class="conditions-table">
+                        <thead>
+                            <tr>
+                                <th>CODIGO</th>
+                                <th>ASEGURADORA</th>
+                                <th>ASEGURADORA</th>
+                                <th>CUPS</th>
+                                <th>Tarifario</th>
+                                <th>Valor CUPS</th>
+                                <th>Tipo Liquidación</th>
+                                <th>Valor</th>
+                                <th>Especialidad</th>
+                                <th>Porcentaje</th>
+                                <th>ID Tarea</th>
+                            </tr>
+                        </thead>
+                        <tbody id="conditions-table-body">
+                            <!-- Datos de ejemplo -->
+                            <tr>
+                                <td>EPS003</td>
+                                <td>COMPANDI</td>
+                                <td>890201</td>
+                                <td>ISS</td>
+                                <td>$ 180,000</td>
+                                <td>Valor Fijo</td>
+                                <td>$18,000</td>
+                                <td>Cirugía General</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>EPS003</td>
+                                <td>COMPANDI</td>
+                                <td>890216</td>
+                                <td>ISS</td>
+                                <td>$ 200,000</td>
+                                <td>Valor Fijo</td>
+                                <td>$20,000</td>
+                                <td>Cirugía General</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>EPS003</td>
+                                <td>COMPANDI</td>
+                                <td>890227</td>
+                                <td>ISS</td>
+                                <td>$ 320,000</td>
+                                <td>Valor Porcentual</td>
+                                <td>Cirugía General</td>
+                                <td>10%</td>
+                                <td>03 Avu</td>
+                            </tr>
+                            <tr>
+                                <td>EPS003</td>
+                                <td>COMPANDI</td>
+                                <td>890227</td>
+                                <td>ISS</td>
+                                <td>$ 1.200,000</td>
+                                <td>Valor Porcentual</td>
+                                <td>Cirugía General</td>
+                                <td>50%</td>
+                                <td>01 Ciru</td>
+                            </tr>
+                            <tr>
+                                <td>EPS003</td>
+                                <td>COMPANDI</td>
+                                <td>890227</td>
+                                <td>SOAT</td>
+                                <td>$ 800,000</td>
+                                <td>Valor Porcentual</td>
+                                <td>Anestesiólogo</td>
+                                <td>30%</td>
+                                <td>02 Anes</td>
+                            </tr>
+                            <tr>
+                                <td>EPS003</td>
+                                <td>COMPANDI</td>
+                                <td>890229</td>
+                                <td>PROPIO</td>
+                                <td>$ 1.000,000</td>
+                                <td>Valor Porcentual</td>
+                                <td>Anestesiólogo</td>
+                                <td>35%</td>
+                                <td>02 Anes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="flex justify-end mt-4 gap-2">
+                <button id="cancel-new-contract" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors">
+                    Cancelar
+                </button>
+                <button id="save-new-contract" class="bg-[var(--mysiss-purple)] text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                    Guardar
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -633,9 +950,54 @@
             resultsContainer.classList.remove('hidden');
         }
 
-        // Botón Nuevo Contrato
+        // Funcionalidad del nuevo modal de contrato
         document.getElementById('new-contract-btn').addEventListener('click', function() {
-            alert('Funcionalidad de nuevo contrato');
+            document.getElementById('new-contract-modal-overlay').classList.remove('hidden');
+            document.getElementById('new-contract-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('close-new-contract-modal').addEventListener('click', function() {
+            document.getElementById('new-contract-modal-overlay').classList.add('hidden');
+            document.getElementById('new-contract-modal').classList.add('hidden');
+        });
+
+        document.getElementById('cancel-new-contract').addEventListener('click', function() {
+            document.getElementById('new-contract-modal-overlay').classList.add('hidden');
+            document.getElementById('new-contract-modal').classList.add('hidden');
+        });
+
+        document.getElementById('new-contract-modal-overlay').addEventListener('click', function() {
+            document.getElementById('new-contract-modal-overlay').classList.add('hidden');
+            document.getElementById('new-contract-modal').classList.add('hidden');
+        });
+
+        // Cambiar entre campos de profesional y sociedad
+        document.getElementById('contract-type-new').addEventListener('change', function() {
+            if (this.value === 'propio') {
+                document.getElementById('professional-fields').classList.remove('hidden');
+                document.getElementById('society-fields').classList.add('hidden');
+            } else {
+                document.getElementById('professional-fields').classList.add('hidden');
+                document.getElementById('society-fields').classList.remove('hidden');
+            }
+        });
+
+        // Manejar la subida de archivos
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'Ningún archivo seleccionado';
+            document.getElementById('file-name').textContent = fileName;
+        });
+
+        // Ejecutar la visualización de la tabla (simulación)
+        document.getElementById('execute-upload').addEventListener('click', function() {
+            document.getElementById('conditions-table-container').classList.remove('hidden');
+        });
+
+        // Guardar nuevo contrato (simulación)
+        document.getElementById('save-new-contract').addEventListener('click', function() {
+            alert('Contrato guardado exitosamente');
+            document.getElementById('new-contract-modal-overlay').classList.add('hidden');
+            document.getElementById('new-contract-modal').classList.add('hidden');
         });
     </script>
 </body>

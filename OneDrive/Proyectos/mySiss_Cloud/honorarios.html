@@ -332,10 +332,17 @@ th.col-select input[type="checkbox"] {
             <label for="especialidad" style="min-width: 20px;"></label>
             <select id="especialidad">
               <option selected value="">Todas</option>
-              <option>Cardiólogo</option>
-              <option>Anestesiólogo</option>
-              <option>Oftalmólogo</option>
-              <option>Endocrinólogo</option>
+			<option>	Cardiologos Asociados	</option>
+			<option>	Radiologos Asociados	</option>
+			<option>	Grupo Anestesia	</option>
+			<option>	Sociedad de Cirugia Plastica	</option>
+			<option>	Maxilo Group	</option>
+			<option>	Urologos Asociados	</option>
+			<option>	Gienco group	</option>
+			<option>	Intensivistas Asociado	</option>
+			<option>	Anestesia center group	</option>
+			<option>	Terapistas Asociados	</option>
+
             </select>
           </div>
         </div>
@@ -418,18 +425,22 @@ const seccionLiq = document.getElementById("liquidacion-section");
 
 // Datos de preliquidaciones
 const preliquidaciones = [
+  { Estado: "Liquidado",    Orden: "007",    Profesional: "Ramirez Julian", contrato: "CON000022",    caso: "50008", cod_servicio: "890201", desc_servicio: "Consulta externa", fecha: "2025-04-06", hora: "09:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
+  { estado: "Lliquidado",    orden: "007",    profesional: "Ramirez Julian", contrato: "CON000022",    caso: "50009", cod_servicio: "890202", desc_servicio: "Consulta prioritaria", fecha: "2025-04-07", hora: "08:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "200000", total: 200000  },
+  { estado: "Liquidado",    orden: "012",    profesional: "Palacio Yeny", contrato: "CON000016",    caso: "50012", cod_servicio: "890203", desc_servicio: "Consulta especializada", fecha: "2025-04-09", hora: "10:00 a.m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "220000", total: 220000  },
+  { estado: "Liquidado",    orden: "012",    profesional: "Palacio Yeny", contrato: "CON000017",    caso: "50013", cod_servicio: "890204", desc_servicio: "Procedimiento diagnóstico", fecha: "2025-04-10", hora: "11:00 a.m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "350000", total: 350000  },
+  { estado: "Liquidado",    orden: "013",    profesional: "López Mario", contrato: "CON000009",    caso: "50015", cod_servicio: "890206", desc_servicio: "Rayos X tórax", fecha: "2025-04-12", hora: "01:00 p.m.", aseguradora: "Coomeva EPS", especialidad: "Radiología", vr_unitario: "250000", total: 250000  },
+  { estado: "Liquidado",    orden: "014",    profesional: "Reyes Camila", contrato: "CON000023",    caso: "50016", cod_servicio: "890207", desc_servicio: "Terapia física", fecha: "2025-04-13", hora: "08:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "180000", total: 180000  },
+  { estado: "Liquidado",    orden: "014",    profesional: "Reyes Camila", contrato: "CON000024",    caso: "50017", cod_servicio: "890208", desc_servicio: "Terapia ocupacional", fecha: "2025-04-14", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "190000", total: 190000  },
+  { estado: "Liquidado",    orden: "015",    profesional: "Ortega Juan", contrato: "CON000012",    caso: "50018", cod_servicio: "890209", desc_servicio: "Consulta externa", fecha: "2025-04-15", hora: "10:00 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
+  { estado: "Liquidado",    orden: "016",    profesional: "Gómez Laura", contrato: "CON00002",    caso: "50020", cod_servicio: "890211", desc_servicio: "Consulta prioritaria", fecha: "2025-04-17", hora: "08:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina General", vr_unitario: "190000", total: 190000  },
+  { estado: "Liquidado",    orden: "016",    profesional: "Gómez Laura", contrato: "CON00003",    caso: "50021", cod_servicio: "890212", desc_servicio: "Terapia lenguaje", fecha: "2025-04-18", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
+
   { estado: "Preliquidado",    orden: "007",    profesional: "Ramirez Julian", contrato: "CON000022",    caso: "50008", cod_servicio: "890201", desc_servicio: "Consulta externa", fecha: "2025-04-06", hora: "09:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
-  { estado: "Preliquidado",    orden: "007",    profesional: "Ramirez Julian", contrato: "CON000023",    caso: "50009", cod_servicio: "890202", desc_servicio: "Consulta prioritaria", fecha: "2025-04-07", hora: "08:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "200000", total: 200000  },
-  { estado: "Preliquidado",    orden: "012",    profesional: "Palacio Yeny", contrato: "CON000016",    caso: "50012", cod_servicio: "890203", desc_servicio: "Consulta especializada", fecha: "2025-04-09", hora: "10:00 a.m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "220000", total: 220000  },
-  { estado: "Preliquidado",    orden: "012",    profesional: "Palacio Yeny", contrato: "CON000017",    caso: "50013", cod_servicio: "890204", desc_servicio: "Procedimiento diagnóstico", fecha: "2025-04-10", hora: "11:00 a.m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "350000", total: 350000  },
-  { estado: "Preliquidado",    orden: "013",    profesional: "López Mario", contrato: "CON000009",    caso: "50015", cod_servicio: "890206", desc_servicio: "Rayos X tórax", fecha: "2025-04-12", hora: "01:00 p.m.", aseguradora: "Coomeva EPS", especialidad: "Radiología", vr_unitario: "250000", total: 250000  },
-  { estado: "Preliquidado",    orden: "014",    profesional: "Reyes Camila", contrato: "CON000023",    caso: "50016", cod_servicio: "890207", desc_servicio: "Terapia física", fecha: "2025-04-13", hora: "08:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "180000", total: 180000  },
-  { estado: "Preliquidado",    orden: "014",    profesional: "Reyes Camila", contrato: "CON000024",    caso: "50017", cod_servicio: "890208", desc_servicio: "Terapia ocupacional", fecha: "2025-04-14", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "190000", total: 190000  },
-  { estado: "Preliquidado",    orden: "015",    profesional: "Ortega Juan", contrato: "CON000012",    caso: "50018", cod_servicio: "890209", desc_servicio: "Consulta externa", fecha: "2025-04-15", hora: "10:00 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "180000", total: 180000  },
-  { estado: "Preliquidado",    orden: "016",    profesional: "Gómez Laura", contrato: "CON00002",    caso: "50020", cod_servicio: "890211", desc_servicio: "Consulta prioritaria", fecha: "2025-04-17", hora: "08:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina General", vr_unitario: "190000", total: 190000  },
-  { estado: "Preliquidado",    orden: "016",    profesional: "Gómez Laura", contrato: "CON00003",    caso: "50021", cod_servicio: "890212", desc_servicio: "Terapia lenguaje", fecha: "2025-04-18", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fonoaudiología", vr_unitario: "210000", total: 210000  },
-  { estado: "Preliquidado",    orden: "017",    profesional: "Palacio Yeny", contrato: "CON000018",    caso: "50022", cod_servicio: "890201", desc_servicio: "Consulta externa", fecha: "2025-04-19", hora: "10:00 a.m.", aseguradora: "Comfenalco", especialidad: "Medicina Interna", vr_unitario: "150000", total: 150000  },
-  { estado: "Preliquidado",    orden: "017",    profesional: "Palacio Yeny", contrato: "CON000019",    caso: "50023", cod_servicio: "890213", desc_servicio: "Terapia respiratoria", fecha: "2025-04-20", hora: "11:00 a.m.", aseguradora: "Coomeva EPS", especialidad: "Fisioterapia", vr_unitario: "200000", total: 200000  },
+  { estado: "Preliquidado",    orden: "007",    profesional: "Ramirez Julian", contrato: "CON000022",    caso: "50009", cod_servicio: "890202", desc_servicio: "Consulta prioritaria", fecha: "2025-04-07", hora: "08:30 a.m.", aseguradora: "Nueva EPS", especialidad: "Medicina Interna", vr_unitario: "200000", total: 200000  },
+
+  { estado: "Preliquidado",    orden: "017",    profesional: "Ramirez Julian", contrato: "CON000018",    caso: "50022", cod_servicio: "890201", desc_servicio: "Consulta externa", fecha: "2025-04-19", hora: "10:00 a.m.", aseguradora: "Comfenalco", especialidad: "Medicina Interna", vr_unitario: "150000", total: 150000  },
+  { estado: "Preliquidado",    orden: "017",    profesional: "Ramirez Julian", contrato: "CON000019",    caso: "50023", cod_servicio: "890213", desc_servicio: "Terapia respiratoria", fecha: "2025-04-20", hora: "11:00 a.m.", aseguradora: "Coomeva EPS", especialidad: "Fisioterapia", vr_unitario: "200000", total: 200000  },
   { estado: "Preliquidado",    orden: "018",    profesional: "López Mario", contrato: "CON000010",    caso: "50024", cod_servicio: "890214", desc_servicio: "Consulta especializada", fecha: "2025-04-21", hora: "12:00 m.", aseguradora: "SURA EPS", especialidad: "Cardiología", vr_unitario: "220000", total: 220000  },
   { estado: "Preliquidado",    orden: "019",    profesional: "Reyes Camila", contrato: "CON000025",    caso: "50026", cod_servicio: "890216", desc_servicio: "Terapia física", fecha: "2025-04-23", hora: "08:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "200000", total: 200000  },
   { estado: "Preliquidado",    orden: "019",    profesional: "Reyes Camila", contrato: "CON000026",    caso: "50027", cod_servicio: "890217", desc_servicio: "Terapia ocupacional", fecha: "2025-04-23", hora: "09:00 a.m.", aseguradora: "SURA EPS", especialidad: "Fisioterapia", vr_unitario: "190000", total: 190000  },
@@ -557,8 +568,8 @@ function filtrarDatos() {
 
   let datosFiltradosPorEstado = preliquidaciones.filter(item => 
     radioPre.checked 
-      ? (item.estado === "Preliquidado" || item.estado === "En seguimiento" || item.estado === "Pendiente")
-      : item.estado === "Liquidado"
+      ? (item.estado === " " || item.estado === " " || item.estado === " ")
+      : item.estado === " "
   );
 
   let datosFiltrados = datosFiltradosPorEstado.filter(item => {
@@ -585,7 +596,7 @@ function mostrarTabla(tipo) {
   let datos = preliquidaciones.filter(item => 
     tipo === 'pre'
       ? (item.estado === "Preliquidado" || item.estado === "En seguimiento" || item.estado === "Pendiente")
-      : item.estado === "Liquidado"
+      : item.estado === "Preliquidado"
   );
 
   generarTabla(datos);

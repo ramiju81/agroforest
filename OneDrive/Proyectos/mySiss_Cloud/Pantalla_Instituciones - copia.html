@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema mySiss - Instituciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mysiss: {
+                            purple: '#8B008B',
+                            light: '#F5E6F5'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-mysiss-light min-h-screen">
+    <!-- Menú principal -->
+    <nav class="bg-white shadow-md p-4">
+        <ul class="flex space-x-6">
+            <li>
+                <button onclick="toggleModal()" class="flex items-center space-x-2 text-mysiss-purple hover:text-purple-700">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                    <span>Institución</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Modal de Institución -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-mysiss-purple">Nueva Institución</h2>
+                <button onclick="toggleModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form id="institucionForm" onsubmit="event.preventDefault(); guardarInstitucion();" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">
+                            Nombre de la Institución <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="nombre" name="nombre" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">
+                            NIT <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="nit" name="nit" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">
+                            Dirección <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="direccion" name="direccion" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">
+                            Teléfono <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="telefono" name="telefono" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">
+                            Contacto <span class="text-red-500">*</span>
+                        </label>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">
+                            Correo <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="contacto" name="contacto" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                        />
+                    </div>
+                        <input type="email" id="correo" name="correo" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                        />
+                    </div>
+                </div>
+
+                <!-- Sección de Sedes -->
+                <div class="mt-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-mysiss-purple">Datos Adicionales - Sedes</h3>
+                        <div class="flex space-x-2">
+                            <button type="button" onclick="agregarSede()"
+                                class="bg-mysiss-purple text-white rounded-full p-2 hover:bg-purple-800 transition-colors">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <input type="text" id="codigoSede" placeholder="Código sede"
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                            />
+                        </div>
+                        <div>
+                            <input type="text" id="descripcionSede" placeholder="Descripción"
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                            />
+                        </div>
+                        <div>
+                            <input type="text" id="telefonoSede" placeholder="Teléfono"
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-mysiss-purple focus:ring focus:ring-mysiss-purple focus:ring-opacity-50"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Tabla de sedes -->
+                    <div id="tablaSedes" class="hidden mt-4">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-mysiss-purple text-white">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-sm">Código</th>
+                                    <th class="px-4 py-2 text-left text-sm">Descripción</th>
+                                    <th class="px-4 py-2 text-left text-sm">Teléfono</th>
+                                    <th class="px-4 py-2 text-center text-sm">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sedesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" onclick="limpiarFormulario()"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-2 bg-mysiss-purple text-white rounded-md hover:bg-purple-800 transition-colors">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+
+            <!-- Tabla de instituciones -->
+            <div id="tablaInstituciones" class="mt-8 hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-mysiss-purple text-white">
+                        <tr>
+                            <th class="w-10 px-2 py-2"></th>
+                            <th class="px-4 py-2 text-left text-sm">Nombre</th>
+                            <th class="px-4 py-2 text-left text-sm">NIT</th>
+                            <th class="px-4 py-2 text-left text-sm">Dirección</th>
+                            <th class="px-4 py-2 text-left text-sm">Teléfono</th>
+                            <th class="px-4 py-2 text-left text-sm">Contacto</th>
+                            <th class="px-4 py-2 text-left text-sm">Correo</th>
+                            <th class="px-4 py-2 text-center text-sm">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="institucionesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let sedes = [];
+        let instituciones = [];
+        let institucionEnEdicion = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const institucionesGuardadas = localStorage.getItem('instituciones');
+            if (institucionesGuardadas) {
+                instituciones = JSON.parse(institucionesGuardadas);
+                actualizarTablaInstituciones();
+            }
+        });
+
+        function toggleModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.toggle('active');
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function limpiarFormularioSede() {
+            document.getElementById('codigoSede').value = '';
+            document.getElementById('descripcionSede').value = '';
+            document.getElementById('telefonoSede').value = '';
+        }
+
+        function agregarSede() {
+            const codigo = document.getElementById('codigoSede').value;
+            const descripcion = document.getElementById('descripcionSede').value;
+            const telefono = document.getElementById('telefonoSede').value;
+
+            if (!codigo || !descripcion) {
+                alert('Por favor complete los campos obligatorios de la sede');
+                return;
+            }
+
+            sedes.push({
+                id: generateId(),
+                codigo,
+                descripcion,
+                telefono
+            });
+
+            actualizarTablaSedes();
+            limpiarFormularioSede();
+        }
+
+        function eliminarSede(id) {
+            sedes = sedes.filter(sede => sede.id !== id);
+            actualizarTablaSedes();
+        }
+
+        function actualizarTablaSedes() {
+            const tabla = document.getElementById('tablaSedes');
+            const tbody = document.getElementById('sedesTableBody');
+            
+            if (sedes.length === 0) {
+                tabla.classList.add('hidden');
+                return;
+            }
+
+            tabla.classList.remove('hidden');
+            tbody.innerHTML = sedes.map(sede => `
+                <tr class="hover:bg-mysiss-light">
+                    <td class="px-4 py-2 text-sm">${sede.codigo}</td>
+                    <td class="px-4 py-2 text-sm">${sede.descripcion}</td>
+                    <td class="px-4 py-2 text-sm">${sede.telefono}</td>
+                    <td class="px-4 py-2 text-sm text-center">
+                        <button onclick="eliminarSede('${sede.id}')"
+                            class="text-red-500 hover:text-red-700">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('institucionForm').reset();
+            sedes = [];
+            actualizarTablaSedes();
+            institucionEnEdicion = null;
+        }
+
+        function guardarInstitucion() {
+            const formData = new FormData(document.getElementById('institucionForm'));
+            const institucion = {
+                id: institucionEnEdicion ? institucionEnEdicion.id : generateId(),
+                nombre: formData.get('nombre'),
+                nit: formData.get('nit'),
+                direccion: formData.get('direccion'),
+                telefono: formData.get('telefono'),
+                contacto: formData.get('contacto'),
+                correo: formData.get('correo'),
+                sedes: [...sedes]
+            };
+
+            if (institucionEnEdicion) {
+                const index = instituciones.findIndex(i => i.id === institucionEnEdicion.id);
+                instituciones[index] = institucion;
+            } else {
+                instituciones.push(institucion);
+            }
+
+            localStorage.setItem('instituciones', JSON.stringify(instituciones));
+            actualizarTablaInstituciones();
+            limpiarFormulario();
+            toggleModal();
+        }
+
+        function editarInstitucion(id) {
+            const institucion = instituciones.find(i => i.id === id);
+            if (!institucion) return;
+
+            document.getElementById('nombre').value = institucion.nombre;
+            document.getElementById('nit').value = institucion.nit;
+            document.getElementById('direccion').value = institucion.direccion;
+            document.getElementById('telefono').value = institucion.telefono;
+            document.getElementById('contacto').value = institucion.contacto;
+            document.getElementById('correo').value = institucion.correo;
+
+            sedes = [...institucion.sedes];
+            actualizarTablaSedes();
+
+            institucionEnEdicion = institucion;
+            toggleModal();
+        }
+
+        function eliminarInstitucion(id) {
+            if (confirm('¿Está seguro de eliminar esta institución?')) {
+                instituciones = instituciones.filter(i => i.id !== id);
+                localStorage.setItem('instituciones', JSON.stringify(instituciones));
+                actualizarTablaInstituciones();
+            }
+        }
+
+        function actualizarTablaInstituciones() {
+            const tabla = document.getElementById('tablaInstituciones');
+            const tbody = document.getElementById('institucionesTableBody');
+            
+            if (instituciones.length === 0) {
+                tabla.classList.add('hidden');
+                return;
+            }
+
+            tabla.classList.remove('hidden');
+            tbody.innerHTML = instituciones.map(inst => `
+                <tr class="hover:bg-mysiss-light">
+                    <td class="px-2 py-2">
+                        <input type="checkbox"
+                            class="h-4 w-4 rounded border-gray-300 text-mysiss-purple focus:ring-mysiss-purple"
+                        />
+                    </td>
+                    <td class="px-4 py-2 text-sm">${inst.nombre}</td>
+                    <td class="px-4 py-2 text-sm">${inst.nit}</td>
+                    <td class="px-4 py-2 text-sm">${inst.direccion}</td>
+                    <td class="px-4 py-2 text-sm">${inst.telefono}</td>
+                    <td class="px-4 py-2 text-sm">${inst.contacto}</td>
+                    <td class="px-4 py-2 text-sm">${inst.correo}</td>
+                    <td class="px-4 py-2 text-sm flex justify-center space-x-2">
+                        <button onclick="editarInstitucion('${inst.id}')"
+                            class="text-mysiss-purple hover:text-purple-700">
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="eliminarInstitucion('${inst.id}')"
+                            class="text-red-500 hover:text-red-700">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

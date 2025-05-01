@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySiss - Sistema de Contratos</title>
+    
+    <!-- Importación de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Variables de colores del sistema */
+        :root {
+            --mysiss-purple: #800080;
+            --mysiss-light-purple: #EBE3F2;
+        }
+
+        /* Estilos base */
+        .hidden {
+            display: none;
+        }
+
+        /* Estilos para modales */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        /* Estilos para tablas */
+        .contract-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .contract-table th,
+        .contract-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+        }
+
+        /* Estilos para inputs y selects */
+        .form-input,
+        .form-select {
+            width: 100%;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+        }
+
+        /* Estilos para botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--mysiss-purple);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #660066;
+        }
+    </style>
+</head>
+<body class="flex h-screen bg-gray-100">
+    <!-- Barra lateral -->
+    <div class="w-48 h-full bg-purple-100 flex flex-col">
+        <div class="p-6">
+            <h1 class="text-purple-800 text-4xl font-bold">mySiss</h1>
+        </div>
+        <nav class="mt-4 flex flex-col">
+            <a href="#" class="py-2 px-6 text-purple-800 hover:bg-purple-200 transition-colors">Configuración</a>
+            <a href="#" class="py-2 px-6 text-purple-800 hover:bg-purple-200 transition-colors mt-2">Data maestra</a>
+            <a href="#" class="py-2 px-6 text-purple-800 hover:bg-purple-200 transition-colors mt-2 border-l-4 border-purple-800">Contratos</a>
+            <a href="#" class="py-2 px-6 text-purple-800 hover:bg-purple-200 transition-colors mt-auto mb-6">Cerrar sesión</a>
+        </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 bg-white p-8 overflow-auto">
+        <div class="ml-12 mt-2 max-w-6xl">
+            <!-- Encabezado y botones -->
+            <div class="flex flex-col gap-2">
+                <h3 class="text-lg font-medium">Contratos</h3>
+                <div class="flex gap-2">
+                    <button onclick="showSearchModal()" class="btn btn-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Buscar
+                    </button>
+                    <button onclick="showNewContractModal()" class="btn btn-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Nuevo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Área de resultados -->
+            <div id="searchResults" class="hidden mt-6">
+                <!-- La tabla de resultados se insertará aquí -->
+            </div>
+
+            <!-- Mensaje inicial -->
+            <div id="emptyState" class="flex flex-col items-center justify-center h-64 mt-8">
+                <p class="text-gray-500 text-lg">
+                    Utilice los botones de búsqueda o nuevo para gestionar contratos
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de búsqueda -->
+    <div id="searchModal" class="modal-overlay hidden">
+        <!-- Contenido del modal de búsqueda -->
+    </div>
+
+    <!-- Modal de nuevo contrato -->
+    <div id="newContractModal" class="modal-overlay hidden">
+        <!-- Contenido del modal de nuevo contrato -->
+    </div>
+
+    <script>
+        // Datos de ejemplo
+        const mockContracts = [
+            {
+                id: '1',
+                code: 'CON001',
+                type: 'propio',
+                professional: 'Dr. Juan Pérez',
+                specialty: 'Cardiología',
+                validityFrom: '2024-01-01',
+                validityTo: '2024-12-31',
+                active: true
+            },
+            // ... más contratos de ejemplo
+        ];
+
+        // Funciones para mostrar/ocultar modales
+        function showSearchModal() {
+            document.getElementById('searchModal').classList.remove('hidden');
+        }
+
+        function showNewContractModal() {
+            document.getElementById('newContractModal').classList.remove('hidden');
+        }
+
+        function hideModals() {
+            document.getElementById('searchModal').classList.add('hidden');
+            document.getElementById('newContractModal').classList.add('hidden');
+        }
+
+        // Función para realizar búsqueda
+        function performSearch(filters) {
+            // Aquí iría la lógica de búsqueda real
+            const results = mockContracts;
+            displayResults(results);
+        }
+
+        // Función para mostrar resultados
+        function displayResults(contracts) {
+            const resultsContainer = document.getElementById('searchResults');
+            // Aquí se generaría la tabla HTML con los resultados
+        }
+
+        // Inicialización de eventos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aquí irían los event listeners adicionales
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Tipos de Liquidación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <button 
+        onclick="toggleModal()"
+        class="bg-purple-700 text-white px-6 py-3 rounded-lg shadow-md hover:bg-purple-800 transition-colors"
+    >
+        Abrir Configuración de Tipos de Liquidación
+    </button>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button 
+                onclick="toggleModal()"
+                class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            >
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <div class="bg-gray-50 rounded">
+                <h2 class="text-xl font-semibold text-purple-700 mb-4">Configuración de Tipos de Liquidación</h2>
+                
+                <form id="tipoLiquidacionForm" onsubmit="event.preventDefault(); guardarTipoLiquidacion();">
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                Código <span class="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="codigo"
+                                name="codigo"
+                                required
+                                class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                Descripción <span class="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="descripcion"
+                                name="descripcion"
+                                required
+                                class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-2 mb-6">
+                        <button
+                            type="submit"
+                            class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition-colors"
+                        >
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+
+                <div id="tablaTiposLiquidacion" class="overflow-x-auto rounded border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-purple-700 text-white">
+                            <tr>
+                                <th class="w-10 px-2 py-2"></th>
+                                <th class="px-4 py-2 text-left text-sm">Código</th>
+                                <th class="px-4 py-2 text-left text-sm">Descripción</th>
+                                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tiposLiquidacionTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let tiposLiquidacion = [];
+        let tipoLiquidacionEnEdicion = null;
+
+        const datosIniciales = [
+            { id: '1', codigo: '01', descripcion: 'Valor Fijo' },
+            { id: '2', codigo: '02', descripcion: 'Valor Porcentual' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tiposGuardados = localStorage.getItem('tiposLiquidacion');
+            if (tiposGuardados) {
+                tiposLiquidacion = JSON.parse(tiposGuardados);
+            } else {
+                tiposLiquidacion = datosIniciales;
+                localStorage.setItem('tiposLiquidacion', JSON.stringify(tiposLiquidacion));
+            }
+            actualizarTablaTiposLiquidacion();
+        });
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function toggleModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.toggle('active');
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('tipoLiquidacionForm').reset();
+            tipoLiquidacionEnEdicion = null;
+        }
+
+        function guardarTipoLiquidacion() {
+            const codigo = document.getElementById('codigo').value;
+            const descripcion = document.getElementById('descripcion').value;
+
+            if (!codigo || !descripcion) {
+                alert('Por favor complete todos los campos obligatorios');
+                return;
+            }
+
+            const nuevoTipo = {
+                id: tipoLiquidacionEnEdicion ? tipoLiquidacionEnEdicion.id : generateId(),
+                codigo,
+                descripcion
+            };
+
+            if (tipoLiquidacionEnEdicion) {
+                const index = tiposLiquidacion.findIndex(t => t.id === tipoLiquidacionEnEdicion.id);
+                tiposLiquidacion[index] = nuevoTipo;
+            } else {
+                tiposLiquidacion.push(nuevoTipo);
+            }
+
+            localStorage.setItem('tiposLiquidacion', JSON.stringify(tiposLiquidacion));
+            actualizarTablaTiposLiquidacion();
+            limpiarFormulario();
+        }
+
+        function editarTipoLiquidacion(id) {
+            const tipo = tiposLiquidacion.find(t => t.id === id);
+            if (!tipo) return;
+
+            document.getElementById('codigo').value = tipo.codigo;
+            document.getElementById('descripcion').value = tipo.descripcion;
+
+            tipoLiquidacionEnEdicion = tipo;
+        }
+
+        function eliminarTipoLiquidacion(id) {
+            if (confirm('¿Está seguro de eliminar este tipo de liquidación?')) {
+                tiposLiquidacion = tiposLiquidacion.filter(t => t.id !== id);
+                localStorage.setItem('tiposLiquidacion', JSON.stringify(tiposLiquidacion));
+                actualizarTablaTiposLiquidacion();
+            }
+        }
+
+        function actualizarTablaTiposLiquidacion() {
+            const tbody = document.getElementById('tiposLiquidacionTableBody');
+            tbody.innerHTML = tiposLiquidacion.map(tipo => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-2 py-2">
+                        <input
+                            type="checkbox"
+                            class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                        />
+                    </td>
+                    <td class="px-4 py-2 text-sm">${tipo.codigo}</td>
+                    <td class="px-4 py-2 text-sm">${tipo.descripcion}</td>
+                    <td class="px-4 py-2 text-sm flex justify-center space-x-2">
+                        <button
+                            onclick="editarTipoLiquidacion('${tipo.id}')"
+                            class="text-blue-500 hover:text-blue-700"
+                        >
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                        </button>
+                        <button
+                            onclick="eliminarTipoLiquidacion('${tipo.id}')"
+                            class="text-red-500 hover:text-red-700"
+                        >
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

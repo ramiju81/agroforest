@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Descuentos</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <!-- Botón para abrir el modal -->
+    <button 
+        onclick="toggleModal()"
+        class="bg-purple-700 text-white px-6 py-3 rounded-lg shadow-md hover:bg-purple-800 transition-colors"
+    >
+        Abrir Configuración de Descuentos
+    </button>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button 
+                onclick="toggleModal()"
+                class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            >
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <div class="bg-gray-50 rounded">
+                <!-- Título del formulario -->
+                <h2 class="text-xl font-semibold text-purple-700 mb-4">Configuración de Descuentos</h2>
+                
+                <!-- Formulario principal -->
+                <form id="descuentoForm" onsubmit="event.preventDefault(); guardarDescuento();">
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                ID Descuento <span class="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="idDescuento"
+                                name="idDescuento"
+                                required
+                                class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                Descripción <span class="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="descripcion"
+                                name="descripcion"
+                                required
+                                class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">
+                                Valor <span class="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                id="valor"
+                                name="valor"
+                                required
+                                class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="flex justify-end space-x-2 mb-6">
+                        <button
+                            type="submit"
+                            class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition-colors"
+                        >
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Tabla de descuentos -->
+                <div id="tablaDescuentos" class="overflow-x-auto rounded border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-purple-700 text-white">
+                            <tr>
+                                <th class="w-10 px-2 py-2"></th>
+                                <th class="px-4 py-2 text-left text-sm">ID Descuento</th>
+                                <th class="px-4 py-2 text-left text-sm">Descripción</th>
+                                <th class="px-4 py-2 text-left text-sm">Valor</th>
+                                <th class="px-4 py-2 text-center text-sm">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="descuentosTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar los iconos de Lucide
+        lucide.createIcons();
+
+        // Estado de la aplicación
+        let descuentos = [];
+        let descuentoEnEdicion = null;
+
+        // Datos iniciales
+        const datosIniciales = [
+            { id: '1', idDescuento: '1', descripcion: 'Uso de sala', valor: 50000 },
+            { id: '2', idDescuento: '2', descripcion: 'Alquiler', valor: 100000 },
+            { id: '3', idDescuento: '3', descripcion: 'Insumos', valor: 80000 },
+            { id: '4', idDescuento: '4', descripcion: 'Otros', valor: 20000 }
+        ];
+
+        // Cargar datos guardados
+        document.addEventListener('DOMContentLoaded', () => {
+            const descuentosGuardados = localStorage.getItem('descuentos');
+            if (descuentosGuardados) {
+                descuentos = JSON.parse(descuentosGuardados);
+            } else {
+                descuentos = datosIniciales;
+                localStorage.setItem('descuentos', JSON.stringify(descuentos));
+            }
+            actualizarTablaDescuentos();
+        });
+
+        // Funciones de utilidad
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function toggleModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.toggle('active');
+        }
+
+        function formatearValor(valor) {
+            return new Intl.NumberFormat('es-CO').format(valor);
+        }
+
+        // Funciones para manejar el formulario
+        function limpiarFormulario() {
+            document.getElementById('descuentoForm').reset();
+            descuentoEnEdicion = null;
+        }
+
+        function guardarDescuento() {
+            const idDescuento = document.getElementById('idDescuento').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const valor = document.getElementById('valor').value;
+
+            if (!idDescuento || !descripcion || !valor) {
+                alert('Por favor complete todos los campos obligatorios');
+                return;
+            }
+
+            const nuevoDescuento = {
+                id: descuentoEnEdicion ? descuentoEnEdicion.id : generateId(),
+                idDescuento,
+                descripcion,
+                valor: Number(valor)
+            };
+
+            if (descuentoEnEdicion) {
+                const index = descuentos.findIndex(d => d.id === descuentoEnEdicion.id);
+                descuentos[index] = nuevoDescuento;
+            } else {
+                descuentos.push(nuevoDescuento);
+            }
+
+            localStorage.setItem('descuentos', JSON.stringify(descuentos));
+            actualizarTablaDescuentos();
+            limpiarFormulario();
+        }
+
+        function editarDescuento(id) {
+            const descuento = descuentos.find(d => d.id === id);
+            if (!descuento) return;
+
+            document.getElementById('idDescuento').value = descuento.idDescuento;
+            document.getElementById('descripcion').value = descuento.descripcion;
+            document.getElementById('valor').value = descuento.valor;
+
+            descuentoEnEdicion = descuento;
+        }
+
+        function eliminarDescuento(id) {
+            if (confirm('¿Está seguro de eliminar este descuento?')) {
+                descuentos = descuentos.filter(d => d.id !== id);
+                localStorage.setItem('descuentos', JSON.stringify(descuentos));
+                actualizarTablaDescuentos();
+            }
+        }
+
+        function actualizarTablaDescuentos() {
+            const tbody = document.getElementById('descuentosTableBody');
+            tbody.innerHTML = descuentos.map(descuento => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-2 py-2">
+                        <input
+                            type="checkbox"
+                            class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                        />
+                    </td>
+                    <td class="px-4 py-2 text-sm">${descuento.idDescuento}</td>
+                    <td class="px-4 py-2 text-sm">${descuento.descripcion}</td>
+                    <td class="px-4 py-2 text-sm">${formatearValor(descuento.valor)}</td>
+                    <td class="px-4 py-2 text-sm flex justify-center space-x-2">
+                        <button
+                            onclick="editarDescuento('${descuento.id}')"
+                            class="text-blue-500 hover:text-blue-700"
+                        >
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                        </button>
+                        <button
+                            onclick="eliminarDescuento('${descuento.id}')"
+                            class="text-red-500 hover:text-red-700"
+                        >
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

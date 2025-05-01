@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración Liquidación</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            z-index: 50;
+        }
+
+        .popup {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 32rem;
+            overflow: hidden;
+            animation: appear 0.3s ease-out;
+        }
+
+        .popup-header {
+            background-color: #7e22ce;
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .popup-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .popup-content {
+            padding: 1rem;
+        }
+
+        .success-message {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #dcfce7;
+            color: #166534;
+            border-radius: 0.25rem;
+            border: 1px solid #bbf7d0;
+            display: flex;
+            align-items: center;
+        }
+
+        .field-group {
+            margin-bottom: 1rem;
+        }
+
+        .field-label {
+            display: block;
+            color: #7e22ce;
+            font-weight: 500;
+            margin-bottom: 0.375rem;
+        }
+
+        .field-container {
+            display: flex;
+            align-items: center;
+            border: 1px solid #7e22ce;
+            border-radius: 0.25rem;
+            overflow: hidden;
+        }
+
+        .field-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            outline: none;
+        }
+
+        .field-input:focus {
+            background-color: #faf5ff;
+        }
+
+        .field-input:disabled {
+            background-color: #f9fafb;
+        }
+
+        .table-container {
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .config-table th {
+            background-color: #7e22ce;
+            color: white;
+            text-align: left;
+            padding: 0.75rem;
+            font-weight: 500;
+        }
+
+        .config-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .config-table tr:nth-child(odd) {
+            background-color: #faf5ff;
+        }
+
+        .config-table tr:nth-child(even) {
+            background-color: white;
+        }
+
+        .config-table tr.selected {
+            background-color: #f3e8ff;
+        }
+
+        .checkbox {
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+            accent-color: #7e22ce;
+        }
+
+        .inline-input {
+            width: 100%;
+            padding: 0.25rem;
+            border: 1px solid #7e22ce;
+            border-radius: 0.25rem;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            border-color: #e9d5ff;
+            background-color: #faf5ff;
+            color: #6b21a8;
+        }
+
+        .btn-primary:hover {
+            background-color: #f3e8ff;
+        }
+
+        .btn-danger {
+            border-color: #fecaca;
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .btn-danger:hover {
+            background-color: #fecaca;
+        }
+
+        .btn-danger:disabled {
+            border-color: #e5e7eb;
+            background-color: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            border-color: #e5e7eb;
+            background-color: #f9fafb;
+            color: #4b5563;
+            margin-left: auto;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f3f4f6;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            color: #7e22ce;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .icon-button:hover {
+            color: #6b21a8;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(-1.25rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="popup-overlay">
+            <div class="popup">
+                <div class="popup-header">
+                    <h2 class="popup-title">Configuración Liquidación</h2>
+                    <button class="icon-button" onclick="cerrarVentana()">✕</button>
+                </div>
+                
+                <div class="popup-content">
+                    <div id="successMessage" class="success-message" style="display: none;">
+                        ✓ Cambios guardados exitosamente
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Salario mínimo</label>
+                        <div class="field-container">
+                            <input type="text" id="salarioMinimo" class="field-input" value="1,160,000" disabled>
+                            <button class="icon-button" onclick="toggleEdicion('salarioMinimo')">✎</button>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Valor UVR</label>
+                        <div class="field-container">
+                            <input type="text" id="valorUVR" class="field-input" value="345.27" disabled>
+                            <button class="icon-button" onclick="toggleEdicion('valorUVR')">✎</button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Selección</th>
+                                    <th>Código</th>
+                                    <th>Descripción</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaDatos"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="guardar()">
+                            💾 Guardar
+                        </button>
+                        <button class="btn btn-primary" onclick="agregar()">
+                            ➕ Agregar
+                        </button>
+                        <button class="btn btn-danger" id="btnEliminar" onclick="eliminar()" disabled>
+                            🗑️ Eliminar
+                        </button>
+                        <button class="btn btn-secondary" onclick="cerrarVentana()">
+                            ✕ Salir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let datos = [
+            { id: '1', codigo: '0001', descripcion: 'Servicio Facturado', seleccionado: false, editando: false },
+            { id: '2', codigo: '0002', descripcion: 'Servicio realizado', seleccionado: false, editando: false }
+        ];
+
+        let camposEditando = {
+            salarioMinimo: false,
+            valorUVR: false
+        };
+
+        function actualizarTabla() {
+            const tbody = document.getElementById('tablaDatos');
+            tbody.innerHTML = datos.map(dato => `
+                <tr class="${dato.seleccionado ? 'selected' : ''}">
+                    <td>
+                        <input type="checkbox" 
+                               class="checkbox"
+                               ${dato.seleccionado ? 'checked' : ''} 
+                               onchange="toggleSeleccion('${dato.id}')">
+                    </td>
+                    <td>${dato.codigo}</td>
+                    <td>
+                        ${dato.editando 
+                            ? `<input type="text" 
+                                     class="inline-input" 
+                                     value="${dato.descripcion}"
+                                     onchange="actualizarDescripcion('${dato.id}', this.value)"
+                                     onblur="finalizarEdicion('${dato.id}')">`
+                            : dato.descripcion
+                        }
+                    </td>
+                    <td>
+                        ${!dato.editando 
+                            ? `<button class="icon-button" onclick="iniciarEdicion('${dato.id}')">✎</button>`
+                            : ''
+                        }
+                    </td>
+                </tr>
+            `).join('');
+
+            const btnEliminar = document.getElementById('btnEliminar');
+            btnEliminar.disabled = !datos.some(d => d.seleccionado);
+        }
+
+        function toggleSeleccion(id) {
+            datos = datos.map(dato => 
+                dato.id === id ? {...dato, seleccionado: !dato.seleccionado} : dato
+            );
+            actualizarTabla();
+        }
+
+        function toggleEdicion(campo) {
+            const input = document.getElementById(campo);
+            const boton = input.nextElementSibling;
+            
+            camposEditando[campo] = !camposEditando[campo];
+            input.disabled = !camposEditando[campo];
+            
+            if (camposEditando[campo]) {
+                input.focus();
+                boton.textContent = '💾';
+            } else {
+                boton.textContent = '✎';
+            }
+        }
+
+        function iniciarEdicion(id) {
+            datos = datos.map(dato => ({
+                ...dato,
+                editando: dato.id === id
+            }));
+            actualizarTabla();
+            const input = document.querySelector(`tr input[type="text"]`);
+            if (input) input.focus();
+        }
+
+        function actualizarDescripcion(id, valor) {
+            datos = datos.map(dato =>
+                dato.id === id ? {...dato, descripcion: valor} : dato
+            );
+        }
+
+        function finalizarEdicion(id) {
+            datos = datos.map(dato =>
+                dato.id === id ? {...dato, editando: false} : dato
+            );
+            actualizarTabla();
+        }
+
+        function agregar() {
+            const nuevoCodigo = String(datos.length + 1).padStart(4, '0');
+            datos.push({
+                id: String(datos.length + 1),
+                codigo: nuevoCodigo,
+                descripcion: '',
+                seleccionado: false,
+                editando: true
+            });
+            actualizarTabla();
+        }
+
+        function eliminar() {
+            datos = datos.filter(dato => !dato.seleccionado);
+            actualizarTabla();
+        }
+
+        function guardar() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'flex';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function cerrarVentana() {
+            // Intenta cerrar la ventana del navegador
+            window.close();	
+            // Si window.close() no funciona (lo cual es común en navegadores modernos),
+            // cierra el popup y redirige a about:blank
+            document.querySelector('.popup-overlay').style.display = 'none';
+            window.location.href = 'about:blank';
+        }
+
+        // Inicializar la tabla al cargar
+        window.onload = actualizarTabla;
+    </script>
+</body>
+</html>
