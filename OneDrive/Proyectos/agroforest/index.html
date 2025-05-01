@@ -1,0 +1,79 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>🌱 AgroForest App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🌱 AgroForest🌿</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="mapa.html">Mapa</a>
+        <a href="historial.html">Historial</a>
+        <a href="configuracion.html">Configuración</a>
+        <div id="adminLinks" style="display: none;">
+            <a href="#" onclick="openUserModal()">Crear Usuario</a>
+        </div>
+        <a href="login.html">Cerrar sesión</a>
+    </div>
+    <div class="main">
+        <h1>Bienvenido 🌱 AgroForest 🌿</h1>
+        <p>Selecciona una opción del menú.</p>
+    </div>
+
+    <div class="modal" id="userModal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeUserModal()">&times;</span>
+            <h2>Crear Nuevo Usuario</h2>
+            <form id="userForm" class="form-grid">
+                <div>
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" name="username" readonly>
+                </div>
+                <div>
+                    <label for="nombre1">Primer Nombre:</label>
+                    <input type="text" name="nombre1" required oninput="generarUsername()">
+                </div>
+                <div>
+                    <label for="nombre2">Segundo Nombre:</label>
+                    <input type="text" name="nombre2">
+                </div>
+                <div>
+                    <label for="apellido1">Primer Apellido:</label>
+                    <input type="text" name="apellido1" required oninput="generarUsername()">
+                </div>
+                <div>
+                    <label for="apellido2">Segundo Apellido:</label>
+                    <input type="text" name="apellido2">
+                </div>
+                <div>
+                    <label for="correo">Correo:</label>
+                    <input type="email" name="correo" required>
+                </div>
+                <div>
+                    <label for="celular">Celular:</label>
+                    <input type="text" name="celular" required>
+                </div>
+                <div>
+                    <label for="contrasena">Contraseña:</label>
+                    <input type="password" name="contrasena" required>
+                </div>
+                <div>
+                    <label for="rol">Rol:</label>
+                    <select name="rol" id="rol" required onchange="generarUsername()">
+                        <option value="AG">Agricultor</option>
+                        <option value="IA">Ingeniero Agrícola</option>
+                        <option value="EX">Experto</option>
+                    </select>
+                </div>
+                <div class="form-footer">
+                    <button type="submit">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
