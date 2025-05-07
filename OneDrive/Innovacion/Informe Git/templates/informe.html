@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Informe Git Completo</title>
+    <style>
+        :root {
+            --color-primario: #4361ee;
+            --color-secundario: #3a0ca3;
+            --color-texto: #2b2d42;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--color-texto);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .repo {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .repo h2 {
+            color: var(--color-primario);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .seccion {
+            margin-bottom: 15px;
+        }
+        .cambios {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 Informe Completo de Repositorios Git</h1>
+    <p>Generado el: {{fecha}}</p>
+    
+    {{contenido}}
+</body>
+</html>
