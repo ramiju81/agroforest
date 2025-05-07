@@ -37,6 +37,7 @@ A continuación, una vista general de la arquitectura principal de carpetas.
 Cada directorio está pensado para representar una capa lógica del sistema, con separación de responsabilidades y facilidad de navegación:  
 
 ├── PCAF Pro/
+    ├── .git/
     ├── backend/
         ├── routes/
     ├── database/
