@@ -1,0 +1,41 @@
+/* src/styles/responsive.css */
+/* Mobile First Approach */
+.container {
+  width: 100%;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+  
+  .workout-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+  
+  .workout-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .auth-container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
