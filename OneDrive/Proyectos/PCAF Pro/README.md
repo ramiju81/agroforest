@@ -1,6 +1,8 @@
 # 🏋️ PCAF   
 ![Estado](https://img.shields.io/badge/ESTADO-EN%20DESARROLLO-yellow) ![Licencia](https://img.shields.io/badge/LICENCIA-PROPIETARIO-red)  
 
+**Solución profesional**  
+
 ## 📌 Descripción
 Proyecto profesional desarrollado como parte de soluciones empresariales.
 
