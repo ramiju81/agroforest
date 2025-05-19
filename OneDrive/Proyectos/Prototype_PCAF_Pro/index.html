@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCAF - Prototipo Interactivo</title>
+    <style>
+        :root {
+            --sidebar-width: 240px;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --image-crop-top: 100px;
+            --image-crop-bottom: 100px;
+            --video-crop-top: 110px;
+            --video-crop-bottom: 110px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background: white;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: relative;
+            min-height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .role-container {
+            margin-bottom: 20px;
+        }
+        .role-title {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .role-title:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .role-options {
+            padding-left: 10px;
+            display: none;
+        }
+        .role-options a {
+            display: flex;
+            align-items: center;
+            color: #ddd;
+            padding: 10px 15px;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            margin: 5px 10px;
+            border-radius: 4px;
+        }
+        .role-options a.active {
+            color: white;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .role-options a.active::before {
+            content: '▶';
+            margin-right: 8px;
+            font-size: 12px;
+        }
+        .role-options a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: rgba(255,255,255,0.7);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+        .sidebar-footer p {
+            margin-bottom: 5px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #ddd;
+            text-decoration: none;
+            padding: 10px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Contenido principal */
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Logo inicial */
+        .logo-screen {
+            text-align: center;
+            margin-top: -10px;
+        }
+        .logo-screen img {
+            width: 450px;
+            max-width: 90%;
+        }
+
+        /* Visor de imágenes */
+        .image-viewer {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .image-container {
+            width: 100%;
+            height: calc(100% - (var(--image-crop-top) + var(--image-crop-bottom)));
+            margin-top: calc(-1 * var(--image-crop-top));
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .prototype-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            cursor: default;
+            user-select: none;
+            position: relative;
+        }
+
+        /* Áreas clickeables - Versión final */
+        .click-area {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 15%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .click-area:hover {
+            opacity: 1;
+        }
+        .click-area::after {
+            content: '';
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+        }
+        .click-left::after {
+            content: '‹';
+            margin-left: 20px;
+        }
+        .click-right::after {
+            content: '›';
+            margin-right: 20px;
+        }
+        .click-left {
+            left: 0;
+            justify-content: flex-start;
+        }
+        .click-right {
+            right: 0;
+            justify-content: flex-end;
+        }
+
+/* Visor de videos */
+.video-viewer {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.video-container {
+    width: 100%;
+    height: calc(100% - (var(--video-crop-top) + var(--video-crop-bottom)));
+    margin-top: calc(-1 * var(--video-crop-top));
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+}
+
+.prototype-video {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    background: black;
+}
+
+.video-message {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 5px;
+    font-size: 14px;
+}
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>PCAF - Prototipo</h2>
+        
+        <a href="#" class="back-link" onclick="showInitialScreen()">Inicio</a>
+
+        <div class="role-container" id="instructor-role">
+            <div class="role-title" onclick="toggleRole('instructor')">
+                <span>Instructor</span>
+                <span>▼</span>
+            </div>
+            <div class="role-options">
+                <a href="#" onclick="showContent('instructor-prototype')" id="instructor-prototype-link">Prototipo</a>
+                <a href="#" onclick="showContent('instructor-video')" id="instructor-video-link">Video</a>
+            </div>
+        </div>
+        
+        <div class="role-container" id="usuario-role">
+            <div class="role-title" onclick="toggleRole('usuario')">
+                <span>Usuario</span>
+                <span>▼</span>
+            </div>
+            <div class="role-options">
+                <a href="#" onclick="showContent('usuario-prototype')" id="usuario-prototype-link">Prototipo</a>
+                <a href="#" onclick="showContent('usuario-video')" id="usuario-video-link">Video</a>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <p>Julian Ramirez</p>
+            <p>Trabajo de Grado</p>
+            <p>Tecnología Desarrollo de Software</p>
+            <p>Semillero de investigación</p>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        <!-- Pantalla Inicial -->
+        <div class="logo-screen" id="initial-screen">
+            <img src="assets/images/logo-pcaf.png" alt="Logo PCAF">
+        </div>
+
+        <!-- Prototipo Usuario -->
+        <div class="image-viewer" id="usuario-prototype" style="display:none">
+            <div class="image-container">
+                <div class="click-area click-left"></div>
+                <img id="usuario-image" class="prototype-img" src="" alt="Prototipo Usuario">
+                <div class="click-area click-right"></div>
+            </div>
+        </div>
+
+        <!-- Video Usuario -->
+        <div class="video-viewer" id="usuario-video" style="display:none">
+            <div class="video-container">
+                <video id="usuario-video-player" class="prototype-video" controls>
+                    <source src="" type="video/mp4">
+                </video>
+                <div class="video-message">El video comenzará automáticamente en 5 segundos</div>
+            </div>
+        </div>
+
+        <!-- Prototipo Instructor -->
+        <div class="image-viewer" id="instructor-prototype" style="display:none">
+            <div class="image-container">
+                <div class="click-area click-left"></div>
+                <img id="instructor-image" class="prototype-img" src="" alt="Prototipo Instructor">
+                <div class="click-area click-right"></div>
+            </div>
+        </div>
+
+        <!-- Video Instructor -->
+        <div class="video-viewer" id="instructor-video" style="display:none">
+            <div class="video-container">
+                <video id="instructor-video-player" class="prototype-video" controls>
+                    <source src="" type="video/mp4">
+                </video>
+                <div class="video-message">El video comenzará automáticamente en 5 segundos</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración - Añade tus imágenes aquí
+        const images = {
+            usuario: [
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.30.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.32 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.32 (2).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.32.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.33 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.33 (2).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.33.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.35.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.40.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.44 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.44 (2).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.44 (3).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.44.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.45 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.45.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.46 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.46 (2).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.46 (3).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.46.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.47 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.47.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.49 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.49 (2).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.49 (3).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.49.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.50 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.50 (3).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.50.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.51 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.51 (2).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.51 (5).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.51 (6).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.51.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.52 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.52 (2).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.52.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.53 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.53.jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.54 (1).jpeg",
+                "assets/prototypes/usuario/WhatsApp Image 2024-03-01 at 10.31.54.jpeg"
+            ],
+            instructor: [
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.34.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.35.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.37.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.38.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.40 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.40.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.41 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.33.41.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.05 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.05.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.06 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.06.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.07 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.07 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.08 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.08.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.09 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.09 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.09 (3).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.09.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.10 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.10 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.10.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.14.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.18 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.18.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.19.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.20 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.20.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.21.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.32 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.32 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.32 (3).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.32.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.33 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.33 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.33.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.34 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.34 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.34 (3).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.34.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.35 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.35 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.35 (3).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.35 (4).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.35.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.36 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.36.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.37 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.37 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.37 (3).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.37.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.38 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.38 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.38 (3).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.38.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.39 (1).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.39 (2).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.39 (3).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.39 (4).jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.34.39.jpeg",
+                "assets/prototypes/instructor/WhatsApp Image 2024-03-01 at 10.35.18.jpeg"
+            ]
+        };
+
+    const videos = {
+        usuario: "assets/videos/App usuario.mp4",
+        instructor: "assets/videos/App instructor.mp4"
+    };
+
+    let currentIndex = { usuario: 0, instructor: 0 };
+    let videoTimeout;
+    let autoAdvanceInterval = null;
+    const intervalTime = 2000; // ← Cambia aquí si quieres otro tiempo
+						  
+    function handleNextClick(role) {
+        if (currentIndex[role] < images[role].length - 1) {
+            currentIndex[role]++;
+            loadImage(role);
+        }
+    }
+
+    function handlePrevClick(role) {
+        if (currentIndex[role] > 0) {
+            currentIndex[role]--;
+            loadImage(role);
+        }
+    }
+
+    function updateArrows(role) {
+        const viewer = document.getElementById(`${role}-prototype`);
+        const leftArrow = viewer.querySelector('.click-left');
+        const rightArrow = viewer.querySelector('.click-right');
+        leftArrow.style.opacity = currentIndex[role] === 0 ? '0' : '0';
+        leftArrow.style.pointerEvents = currentIndex[role] === 0 ? 'none' : 'auto';
+        rightArrow.style.opacity = currentIndex[role] === images[role].length - 1 ? '0' : '0';
+        rightArrow.style.pointerEvents = currentIndex[role] === images[role].length - 1 ? 'none' : 'auto';
+    }
+
+    function loadImage(role) {
+        const img = document.getElementById(`${role}-image`);
+        img.src = images[role][currentIndex[role]];
+        img.onload = function () {
+            updateArrows(role);
+            const container = this.parentElement;
+            container.style.marginTop = `-${getComputedStyle(document.documentElement).getPropertyValue('--image-crop-top')}`;
+            container.style.height = `calc(100% + ${getComputedStyle(document.documentElement).getPropertyValue('--image-crop-top')} + ${getComputedStyle(document.documentElement).getPropertyValue('--image-crop-bottom')})`;
+        };
+    }
+
+    function loadVideo(role) {
+        const videoPlayer = document.getElementById(`${role}-video-player`);
+        videoPlayer.src = videos[role];
+        videoPlayer.load();
+
+        videoPlayer.onloadedmetadata = function () {
+            const container = this.parentElement;
+            container.style.marginTop = `-${getComputedStyle(document.documentElement).getPropertyValue('--video-crop-top')}`;
+            container.style.height = `calc(100% + ${getComputedStyle(document.documentElement).getPropertyValue('--video-crop-top')} + ${getComputedStyle(document.documentElement).getPropertyValue('--video-crop-bottom')})`;
+
+            const message = container.querySelector('.video-message');
+            if (message) {
+                message.style.display = 'block';
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+
+            clearTimeout(videoTimeout);
+            videoTimeout = setTimeout(() => {
+                videoPlayer.play().catch(e => console.log("Autoplay no permitido:", e));
+            }, 5000);
+        };
+    }
+
+    function startAutoAdvance(role) {
+        stopAutoAdvance();
+        currentIndex[role] = 0;
+        loadImage(role);
+
+        autoAdvanceInterval = setInterval(() => {
+            if (currentIndex[role] < images[role].length - 1) {
+                currentIndex[role]++;
+                loadImage(role);
+            } else {
+                currentIndex[role] = 0;
+                loadImage(role);
+                stopAutoAdvance(); // se detiene después de volver al inicio
+            }
+        }, intervalTime);
+    }
+
+    function stopAutoAdvance() {
+        if (autoAdvanceInterval !== null) {
+            clearInterval(autoAdvanceInterval);
+            autoAdvanceInterval = null;
+        }
+    }
+
+    function showContent(contentId) {
+        document.getElementById('initial-screen').style.display = 'none';
+        document.querySelectorAll('.image-viewer, .video-viewer').forEach(el => {
+            el.style.display = 'none';
+            if (el.id.includes('video')) {
+                const videoPlayer = el.querySelector('video');
+                videoPlayer.pause();
+                clearTimeout(videoTimeout);
+            }
+        });
+
+        stopAutoAdvance();
+
+        const element = document.getElementById(contentId);
+        if (element) {
+            element.style.display = 'block';
+            setActiveLink(contentId);
+
+            if (contentId.includes('prototype')) {
+                const role = contentId.split('-')[0];
+                startAutoAdvance(role);
+            } else if (contentId.includes('video')) {
+                const role = contentId.split('-')[0];
+                loadVideo(role);
+            }
+        }
+    }
+
+    function showInitialScreen() {
+        document.getElementById('initial-screen').style.display = 'flex';
+        document.querySelectorAll('.image-viewer, .video-viewer').forEach(el => {
+            el.style.display = 'none';
+            if (el.id.includes('video')) {
+                const videoPlayer = el.querySelector('video');
+                videoPlayer.pause();
+                clearTimeout(videoTimeout);
+            }
+        });
+        stopAutoAdvance();
+        document.querySelectorAll('.role-options a').forEach(link => {
+            link.classList.remove('active');
+        });
+    }
+
+    function setActiveLink(contentId) {
+        document.querySelectorAll('.role-options a').forEach(link => {
+            link.classList.remove('active');
+        });
+        const activeLink = document.getElementById(`${contentId}-link`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+    }
+
+    function toggleRole(role) {
+        const otherRole = role === 'usuario' ? 'instructor' : 'usuario';
+        document.getElementById(`${otherRole}-role`).querySelector('.role-options').style.display = 'none';
+        const options = document.getElementById(`${role}-role`).querySelector('.role-options');
+        options.style.display = options.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function initEvents() {
+        document.querySelectorAll('.click-left').forEach(arrow => {
+            arrow.addEventListener('click', function (e) {
+                const role = this.closest('.image-viewer').id.split('-')[0];
+                handlePrevClick(role);
+                e.stopPropagation();
+            });
+        });
+
+        document.querySelectorAll('.click-right').forEach(arrow => {
+            arrow.addEventListener('click', function (e) {
+                const role = this.closest('.image-viewer').id.split('-')[0];
+                handleNextClick(role);
+                e.stopPropagation();
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            const activeViewer = document.querySelector('.image-viewer[style*="display: block"]');
+            if (activeViewer) {
+                const role = activeViewer.id.split('-')[0];
+                if (e.key === 'ArrowLeft') handlePrevClick(role);
+                if (e.key === 'ArrowRight') handleNextClick(role);
+            }
+        });
+    }
+
+    function init() {
+        initEvents();
+        showInitialScreen();
+    }
+
+    init();
+    </script>
+</body>
+</html>
